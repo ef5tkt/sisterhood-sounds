@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, Star, MessageCircle, Share2, ChevronLeft, Shuffle } from "lucide-react";
+import { Heart, Star, MessageCircle, Share2, ChevronLeft, User } from "lucide-react";
 import { toast } from "sonner";
 import { mockAudios, AudioItem } from "@/data/mockAudios";
 import NFTAvatar from "@/components/NFTAvatar";
@@ -192,10 +192,10 @@ const ListenPage = () => {
           </div>
           
           <button
-            onClick={() => switchAudio(currentTag)}
+            onClick={() => navigate("/profile")}
             className="w-12 h-12 rounded-2xl glass-card-solid flex items-center justify-center transition-all hover:scale-105 active:scale-95"
           >
-            <Shuffle className="w-5 h-5 text-foreground" />
+            <User className="w-5 h-5 text-foreground" />
           </button>
         </div>
       </div>
