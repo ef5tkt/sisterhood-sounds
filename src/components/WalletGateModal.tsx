@@ -74,10 +74,8 @@ const WalletGateModal = ({ isOpen, onClose, onSuccess }: WalletGateModalProps) =
       />
       
       {/* 模态框 */}
-      <div className={cn(
-        "relative z-10 w-full max-w-sm mx-4 animate-slide-up"
-      )}>
-        <div className="glass-card-solid rounded-3xl p-6 shadow-2xl">
+      <div className="relative z-10 w-full max-w-sm mx-4 animate-slide-up">
+        <div className="bg-background rounded-3xl p-6 shadow-2xl border border-border/50">
           {/* 关闭按钮 */}
           <button
             onClick={onClose}
