@@ -161,28 +161,28 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fade-in">
       {/* 背景遮罩 */}
       <div
-        className="absolute inset-0 glass-overlay"
+        className="absolute inset-0 bg-foreground/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* 弹窗内容 */}
-      <div className="relative w-full max-w-lg max-h-[90vh] glass-modal rounded-t-3xl sm:rounded-3xl 
-                    overflow-hidden animate-scale-in flex flex-col">
+      {/* 弹窗内容 - 实心背景 */}
+      <div className="relative w-full max-w-lg max-h-[90vh] bg-background rounded-t-3xl sm:rounded-3xl 
+                    overflow-hidden animate-scale-in flex flex-col shadow-2xl border border-border">
         {/* 头部 */}
-        <div className="flex items-center justify-between p-4 border-b border-border/30">
+        <div className="flex items-center justify-between p-4 border-b border-border bg-background">
           <h3 className="font-display text-lg font-semibold text-foreground">作品详情</h3>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full glass-button flex items-center justify-center"
+            className="w-8 h-8 rounded-full bg-secondary hover:bg-secondary/80 flex items-center justify-center transition-colors"
           >
             <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
 
         {/* 可滚动内容区 */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto bg-background">
           {/* 作者信息 */}
-          <div className="p-4 border-b border-border/30">
+          <div className="p-4 border-b border-border">
             <div className="flex items-center gap-3">
               <button onClick={handleAuthorClick} className="hover:scale-105 transition-transform">
                 <img
@@ -199,7 +199,7 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
                   {audio.author}
                 </button>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="glass-badge px-2 py-0.5">{audio.category}</span>
+                  <span className="bg-secondary px-2 py-0.5 rounded-full">{audio.category}</span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {audio.duration}
@@ -209,7 +209,7 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 px-3 rounded-lg glass-button"
+                className="h-8 px-3 rounded-lg"
               >
                 关注
               </Button>
@@ -217,7 +217,7 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
           </div>
 
           {/* 标题和描述 */}
-          <div className="p-4 border-b border-border/30">
+          <div className="p-4 border-b border-border">
             <h2 className="text-lg font-medium text-foreground mb-2 leading-relaxed">
               {audio.title}
             </h2>
@@ -227,8 +227,8 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
           </div>
 
           {/* 播放器 */}
-          <div className="p-4 border-b border-border/30">
-            <div className="glass-card-light rounded-2xl p-4">
+          <div className="p-4 border-b border-border">
+            <div className="bg-secondary/50 rounded-2xl p-4">
               <div className="flex items-center gap-4">
                 {/* 播放按钮 */}
                 <button
@@ -268,7 +268,7 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
           </div>
 
           {/* 互动按钮 */}
-          <div className="p-4 border-b border-border/30">
+          <div className="p-4 border-b border-border">
             <div className="flex items-center justify-around">
               <button
                 onClick={handleLike}
@@ -355,7 +355,7 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
         </div>
 
         {/* 评论输入框 - 固定在底部 */}
-        <div className="p-4 border-t border-border/30 glass-card-solid">
+        <div className="p-4 border-t border-border bg-background">
           <div className="flex gap-3">
             <img
               src="https://api.dicebear.com/7.x/lorelei/svg?seed=user"
@@ -367,7 +367,7 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="写下你的评论..."
-                className="glass-input min-h-[40px] max-h-[100px] py-2 px-3 rounded-xl resize-none text-sm"
+                className="bg-secondary/50 border-border min-h-[40px] max-h-[100px] py-2 px-3 rounded-xl resize-none text-sm"
                 rows={1}
               />
               <Button
