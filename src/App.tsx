@@ -7,6 +7,7 @@ import LandingPage from "./pages/LandingPage";
 import HomeFeed from "./pages/HomeFeed";
 import CreatePage from "./pages/CreatePage";
 import ProfilePage from "./pages/ProfilePage";
+import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/home" element={<HomeFeed />} />
           <Route path="/create" element={<CreatePage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
