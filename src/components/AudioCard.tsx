@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Play, Pause, Heart, MessageCircle, Bookmark, Share2 } from "lucide-react";
 import { toast } from "sonner";
+import AudioDetailModal from "./AudioDetailModal";
 
 interface AudioCardProps {
   id: string;
@@ -13,9 +14,11 @@ interface AudioCardProps {
   category: string;
   likes: number;
   comments: number;
+  description?: string;
   isPlaying?: boolean;
   onPlayToggle?: (id: string) => void;
 }
+
 const AudioCard = ({
   id,
   title,
@@ -26,6 +29,7 @@ const AudioCard = ({
   category,
   likes,
   comments,
+  description,
   isPlaying = false,
   onPlayToggle,
 }: AudioCardProps) => {
@@ -34,9 +38,9 @@ const AudioCard = ({
   const [saved, setSaved] = useState(false);
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
   const [likeCount, setLikeCount] = useState(likes);
+  const [showDetail, setShowDetail] = useState(false);
 
   const handleAvatarClick = () => {
-    // 跳转到用户个人主页，使用 authorId 或默认 ID
     navigate(`/profile/${authorId || id}`);
   };
 
@@ -85,10 +89,11 @@ const AudioCard = ({
   };
 
   const handleComment = () => {
-    toast("评论功能即将开放 💭", {
-      description: "你的声音我们都想听见",
-      duration: 2000,
-    });
+    setShowDetail(true);
+  };
+
+  const handleTitleClick = () => {
+    setShowDetail(true);
   };
 
   // 生成模拟声波条
@@ -127,11 +132,15 @@ const AudioCard = ({
         </span>
       </div>
 
-      {/* 标题 */}
-      <h3 className="font-medium text-foreground mb-4 line-clamp-2 leading-relaxed">
-        {title}
-      </h3>
-
+      {/* 标题 - 点击打开详情 */}
+      <button
+        onClick={handleTitleClick}
+        className="block text-left w-full"
+      >
+        <h3 className="font-medium text-foreground mb-4 line-clamp-2 leading-relaxed hover:text-primary transition-colors">
+          {title}
+        </h3>
+      </button>
       {/* 声波可视化 + 播放按钮 */}
       <div className="relative h-16 mb-4 flex items-center gap-3">
         {/* 播放按钮 */}
@@ -226,6 +235,24 @@ const AudioCard = ({
           </button>
         </div>
       </div>
+
+      {/* 作品详情弹窗 */}
+      <AudioDetailModal
+        isOpen={showDetail}
+        onClose={() => setShowDetail(false)}
+        audio={{
+          id,
+          title,
+          author,
+          authorId,
+          avatar,
+          duration,
+          category,
+          likes: likeCount,
+          comments,
+          description,
+        }}
+      />
     </div>
   );
 };

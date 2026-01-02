@@ -8,6 +8,7 @@ export interface AudioItem {
   category: string;
   likes: number;
   comments: number;
+  description?: string;
 }
 
 export const mockAudios: AudioItem[] = [
@@ -21,6 +22,7 @@ export const mockAudios: AudioItem[] = [
     category: "冥想",
     likes: 324,
     comments: 45,
+    description: "在这个喧嚣的世界里，给自己一段安静的时光。跟随我的声音，慢慢放下今天的疲惫，让身心回归宁静。愿你今夜好眠，明天醒来，又是崭新的开始。",
   },
   {
     id: "2",
@@ -32,6 +34,7 @@ export const mockAudios: AudioItem[] = [
     category: "故事",
     likes: 567,
     comments: 89,
+    description: "如果可以给18岁的自己写一封信，你会说些什么？这是我想对曾经的自己说的话，也许也是你想听的。愿每一个正在成长中的你，都能温柔地对待自己。",
   },
   {
     id: "3",
@@ -43,6 +46,7 @@ export const mockAudios: AudioItem[] = [
     category: "诗词",
     likes: 892,
     comments: 123,
+    description: "从明天起，做一个幸福的人。喂马、劈柴，周游世界。用诗意的声音，读一首关于理想生活的诗，愿你心中永远有大海，永远有春暖花开。",
   },
   {
     id: "4",
@@ -54,6 +58,7 @@ export const mockAudios: AudioItem[] = [
     category: "演讲",
     likes: 456,
     comments: 78,
+    description: "学会说不，是成年人最重要的课题之一。今天分享几个在职场中优雅拒绝的技巧，让你既能保护自己的边界，又不伤害与同事的关系。",
   },
   {
     id: "5",
@@ -65,6 +70,7 @@ export const mockAudios: AudioItem[] = [
     category: "故事",
     likes: 234,
     comments: 34,
+    description: "窗外的雨淅淅沥沥，咖啡的香气弥漫在空气中。这是一个关于等待的故事，关于那些在雨天咖啡馆里发生的温暖邂逅。",
   },
   {
     id: "6",
@@ -76,6 +82,7 @@ export const mockAudios: AudioItem[] = [
     category: "冥想",
     likes: 678,
     comments: 56,
+    description: "早安，亲爱的。跟随这段冥想，用深呼吸唤醒沉睡的身体，用正念迎接新的一天。愿你每一个清晨都充满能量与希望。",
   },
   {
     id: "7",
@@ -87,6 +94,7 @@ export const mockAudios: AudioItem[] = [
     category: "故事",
     likes: 1024,
     comments: 156,
+    description: "小时候觉得妈妈太唠叨，长大后才发现，那些话里藏着最深的爱。这是一封来自妈妈的信，写给所有正在成长或已经长大的孩子。",
   },
   {
     id: "8",
@@ -98,6 +106,7 @@ export const mockAudios: AudioItem[] = [
     category: "诗词",
     likes: 789,
     comments: 92,
+    description: "我说你是人间的四月天，笑响点亮了四面风。用最温柔的声音，朗读林徽因最美的诗篇，献给所有如四月天般美好的你。",
   },
 ];
 
