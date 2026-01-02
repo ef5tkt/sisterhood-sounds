@@ -94,6 +94,16 @@ const ListenPage = () => {
     switchAudio(tag);
   };
 
+  // 创作入口处理
+  const handleCreateClick = () => {
+    setShowTagMenu(false);
+    if (!isUserVerified()) {
+      setShowWalletModal(true);
+      return;
+    }
+    navigate("/create");
+  };
+
   // 点赞处理 - 所有人都可以
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -319,6 +329,7 @@ const ListenPage = () => {
         isOpen={showTagMenu}
         onClose={() => setShowTagMenu(false)}
         onSelectTag={handleTagSelect}
+        onCreateClick={handleCreateClick}
         currentTag={currentTag}
       />
 
