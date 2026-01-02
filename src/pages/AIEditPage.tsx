@@ -75,7 +75,7 @@ const AIEditPage = ({ onBack, onPublish, recordingTime }: AIEditPageProps) => {
   const handleUploadComplete = () => {
     setShowUploadAnimation(false);
     onPublish();
-    navigate("/home");
+    navigate("/");
   };
 
   if (showUploadAnimation) {

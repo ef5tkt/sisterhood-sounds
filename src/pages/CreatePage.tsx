@@ -125,7 +125,7 @@ const CreatePage = () => {
       <header className="relative z-10 glass-panel border-b border-border/30 rounded-none">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <button
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/")}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />

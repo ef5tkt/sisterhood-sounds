@@ -180,7 +180,7 @@ const ListenPage = () => {
       <div className="absolute top-0 left-0 right-0 z-20 p-4 safe-area-top">
         <div className="flex items-center justify-between">
           <button
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/")}
             className="w-12 h-12 rounded-2xl glass-card-solid flex items-center justify-center transition-all hover:scale-105 active:scale-95"
           >
             <ChevronLeft className="w-6 h-6 text-foreground" />

@@ -43,7 +43,7 @@ const LandingPage = () => {
       description: "愿你在这里找到温暖与共鸣",
     });
     setTimeout(() => {
-      navigate("/home");
+      navigate("/");
     }, 1000);
   };
 
