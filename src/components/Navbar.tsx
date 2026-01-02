@@ -54,8 +54,11 @@ const Navbar = () => {
           </button>
 
           {/* 用户头像 */}
-          <button className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-primary/20 
-                           hover:ring-primary/40 transition-all duration-300">
+          <button 
+            onClick={() => navigate("/profile")}
+            className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-primary/20 
+                           hover:ring-primary/40 transition-all duration-300"
+          >
             <img
               src="https://api.dicebear.com/7.x/lorelei/svg?seed=user"
               alt="用户头像"
