@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Mic, Square, Play, Pause, Sparkles, Music2, BookOpen, Waves, Check } from "lucide-react";
+import { ArrowLeft, Mic, Square, Play, Pause, Sparkles, Music2, BookOpen, Waves, Check, Edit3, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 const musicTags = [
@@ -21,6 +23,11 @@ const CreatePage = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // 声音主题编辑
+  const [showThemeEditor, setShowThemeEditor] = useState(false);
+  const [soundTitle, setSoundTitle] = useState("");
+  const [soundDescription, setSoundDescription] = useState("");
 
   // 录音计时器
   useEffect(() => {
@@ -103,6 +110,19 @@ const CreatePage = () => {
     setSelectedTag(null);
     setIsPlaying(false);
     setIsProcessing(false);
+    setSoundTitle("");
+    setSoundDescription("");
+  };
+
+  const handleSaveTheme = () => {
+    if (!soundTitle.trim()) {
+      toast.error("请输入作品标题");
+      return;
+    }
+    setShowThemeEditor(false);
+    toast.success("声音主题已保存", {
+      description: soundTitle,
+    });
   };
 
   return (
@@ -130,6 +150,24 @@ const CreatePage = () => {
 
       {/* 主内容区 */}
       <main className="relative z-10 container mx-auto px-4 py-8 flex flex-col items-center">
+        {/* 声音主题编辑入口 */}
+        {recordingState === "idle" && (
+          <button
+            onClick={() => setShowThemeEditor(true)}
+            className="glass-card rounded-xl px-4 py-3 mb-6 flex items-center gap-3 hover:bg-secondary/50 transition-colors animate-fade-in-up"
+          >
+            <Edit3 className="w-5 h-5 text-primary" />
+            <div className="text-left">
+              <p className="text-sm font-medium text-foreground">
+                {soundTitle || "编辑声音主题"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {soundDescription || "添加标题和描述，让作品更有意义"}
+              </p>
+            </div>
+          </button>
+        )}
+
         {/* 录音提示 */}
         <p className="text-center text-muted-foreground mb-8 animate-fade-in-up">
           {recordingState === "idle" && "点击下方按钮，开始录制你的声音"}
@@ -291,6 +329,62 @@ const CreatePage = () => {
           音频将永久存储于 IPFS，由你完全掌控
         </p>
       </main>
+
+      {/* 声音主题编辑弹窗 */}
+      {showThemeEditor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-fade-in">
+          <div className="glass-card rounded-2xl p-6 w-full max-w-md animate-scale-in">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-foreground">编辑声音主题</h3>
+              <button
+                onClick={() => setShowThemeEditor(false)}
+                className="w-8 h-8 rounded-full bg-secondary/50 flex items-center justify-center hover:bg-secondary transition-colors"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 block">作品标题</label>
+                <Input
+                  value={soundTitle}
+                  onChange={(e) => setSoundTitle(e.target.value)}
+                  placeholder="给你的声音起个名字"
+                  className="bg-secondary/30 border-border/50"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm text-muted-foreground mb-2 block">作品描述</label>
+                <Textarea
+                  value={soundDescription}
+                  onChange={(e) => setSoundDescription(e.target.value)}
+                  placeholder="描述一下这段声音的故事..."
+                  rows={4}
+                  className="bg-secondary/30 border-border/50 resize-none"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button
+                  onClick={() => setShowThemeEditor(false)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  取消
+                </Button>
+                <Button
+                  onClick={handleSaveTheme}
+                  className="flex-1 bg-primary hover:bg-primary/90"
+                >
+                  保存
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Play, Pause, Heart, MessageCircle, Bookmark, Share2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -6,6 +7,7 @@ interface AudioCardProps {
   id: string;
   title: string;
   author: string;
+  authorId?: string;
   avatar: string;
   duration: string;
   category: string;
@@ -14,11 +16,11 @@ interface AudioCardProps {
   isPlaying?: boolean;
   onPlayToggle?: (id: string) => void;
 }
-
 const AudioCard = ({
   id,
   title,
   author,
+  authorId,
   avatar,
   duration,
   category,
@@ -27,10 +29,16 @@ const AudioCard = ({
   isPlaying = false,
   onPlayToggle,
 }: AudioCardProps) => {
+  const navigate = useNavigate();
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
   const [likeCount, setLikeCount] = useState(likes);
+
+  const handleAvatarClick = () => {
+    // 跳转到用户个人主页，使用 authorId 或默认 ID
+    navigate(`/profile/${authorId || id}`);
+  };
 
   const handlePlayClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     // 创建波纹效果
@@ -94,11 +102,16 @@ const AudioCard = ({
       {/* 顶部：作者信息 */}
       <div className="flex items-center gap-3 mb-4">
         <div className="relative">
-          <img
-            src={avatar}
-            alt={author}
-            className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20"
-          />
+          <button
+            onClick={handleAvatarClick}
+            className="block hover:scale-110 transition-transform duration-200"
+          >
+            <img
+              src={avatar}
+              alt={author}
+              className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20 hover:ring-primary/50 transition-all"
+            />
+          </button>
           {isPlaying && (
             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-accent rounded-full flex items-center justify-center">
               <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
