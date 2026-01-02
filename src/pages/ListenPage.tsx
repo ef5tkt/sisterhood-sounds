@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, Star, MessageCircle, Share2, ChevronLeft, User } from "lucide-react";
+import { Heart, Star, MessageCircle, Share2, ChevronLeft, User, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { mockAudios, AudioItem } from "@/data/mockAudios";
 import NFTAvatar from "@/components/NFTAvatar";
@@ -29,6 +29,13 @@ const ListenPage = () => {
   const [currentTag, setCurrentTag] = useState<string>("兔子洞");
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [pendingAction, setPendingAction] = useState<"save" | "comment" | null>(null);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  
+  // 滑动相关的 refs
+  const touchStartY = useRef<number>(0);
+  const touchEndY = useRef<number>(0);
+  const isDragging = useRef<boolean>(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // 根据标签获取随机音频
   const getRandomAudio = useCallback((tag?: string) => {
@@ -80,6 +87,42 @@ const ListenPage = () => {
     const randomAudio = getRandomAudio();
     setCurrentAudio(randomAudio);
   }, []);
+
+  // 滑动手势处理
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+    isDragging.current = true;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isDragging.current) return;
+    
+    const currentY = e.touches[0].clientY;
+    const diff = touchStartY.current - currentY;
+    
+    // 只允许上滑（正值），限制最大偏移
+    if (diff > 0) {
+      setSwipeOffset(Math.min(diff * 0.5, 150));
+    } else {
+      setSwipeOffset(Math.max(diff * 0.3, -50));
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!isDragging.current) return;
+    isDragging.current = false;
+    
+    // 如果上滑超过阈值，切换到下一个音频
+    if (swipeOffset > 80) {
+      switchAudio(currentTag);
+      if (navigator.vibrate) {
+        navigator.vibrate(30);
+      }
+    }
+    
+    // 重置偏移
+    setSwipeOffset(0);
+  }, [swipeOffset, switchAudio, currentTag]);
 
   // 处理标签选择
   const handleTagSelect = (tag: string) => {
@@ -173,7 +216,13 @@ const ListenPage = () => {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div 
+      ref={containerRef}
+      className="relative min-h-screen overflow-hidden touch-pan-x"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* 流动渐变背景 */}
       <div 
         className="absolute inset-0 animate-fluid-bg"
@@ -210,13 +259,17 @@ const ListenPage = () => {
         </div>
       </div>
 
-      {/* 主内容区域 - 点击屏幕唤起标签菜单 */}
+      {/* 主内容区域 - 点击屏幕唤起标签菜单，支持滑动 */}
       <div 
         className={cn(
-          "relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-20 pb-32 transition-opacity duration-500",
-          isTransitioning ? "opacity-0" : "opacity-100"
+          "relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-20 pb-32 transition-all duration-300",
+          isTransitioning ? "opacity-0 scale-95" : "opacity-100 scale-100"
         )}
-        onClick={() => setShowTagMenu(true)}
+        style={{
+          transform: `translateY(${-swipeOffset}px)`,
+          transition: isDragging.current ? 'none' : 'transform 0.3s ease-out, opacity 0.5s, scale 0.5s'
+        }}
+        onClick={() => !isDragging.current && setShowTagMenu(true)}
       >
         {/* NFT 风格头像 - 点击跳转个人主页 */}
         <div 
@@ -251,11 +304,34 @@ const ListenPage = () => {
           </p>
         </div>
 
-        {/* 点击提示 */}
-        <div className="text-xs text-muted-foreground/50 font-body animate-pulse">
-          点击屏幕切换分类
+        {/* 滑动提示 */}
+        <div className="flex flex-col items-center gap-1 text-muted-foreground/50">
+          <ChevronUp 
+            className={cn(
+              "w-5 h-5 transition-all duration-300",
+              swipeOffset > 0 ? "opacity-100 -translate-y-1" : "opacity-50 animate-bounce"
+            )} 
+          />
+          <span className="text-xs font-body">
+            {swipeOffset > 80 ? "松开切换" : "上滑听下一个"}
+          </span>
         </div>
       </div>
+
+      {/* 下一个音频预览提示（滑动时显示） */}
+      {swipeOffset > 30 && (
+        <div 
+          className="absolute bottom-0 left-0 right-0 z-5 flex items-center justify-center pb-40 pointer-events-none"
+          style={{
+            opacity: Math.min(swipeOffset / 100, 0.8),
+            transform: `translateY(${100 - swipeOffset * 0.5}px)`
+          }}
+        >
+          <div className="text-sm text-foreground/60 font-body">
+            下一个声音等着你...
+          </div>
+        </div>
+      )}
 
       {/* 底部互动按钮 */}
       <div className="fixed bottom-8 left-0 right-0 z-20 px-6 safe-area-bottom">
