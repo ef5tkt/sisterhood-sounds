@@ -1,34 +1,41 @@
 import { cn } from "@/lib/utils";
 
 interface NFTAvatarProps {
-  src: string;
+  src?: string;
+  seed?: string;
   alt?: string;
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
   onClick?: () => void;
+  glowing?: boolean;
 }
 
 const sizeClasses = {
   sm: "w-10 h-10",
   md: "w-14 h-14",
   lg: "w-20 h-20",
-  xl: "w-28 h-28",
+  xl: "w-32 h-32",
 };
 
 const borderSizeClasses = {
   sm: "p-0.5",
   md: "p-1",
-  lg: "p-1",
-  xl: "p-1.5",
+  lg: "p-1.5",
+  xl: "p-2",
 };
 
 const NFTAvatar = ({ 
   src, 
+  seed,
   alt = "Avatar", 
   size = "md", 
   className,
-  onClick 
+  onClick,
+  glowing = false
 }: NFTAvatarProps) => {
+  // 使用 seed 生成 dicebear 头像 URL
+  const avatarSrc = src || `https://api.dicebear.com/7.x/lorelei/svg?seed=${seed || "default"}`;
+  
   return (
     <div 
       className={cn(
@@ -43,11 +50,14 @@ const NFTAvatar = ({
     >
       {/* Glow effect */}
       <div 
-        className="absolute inset-0 rounded-full animate-nft-glow"
+        className={cn(
+          "absolute inset-0 rounded-full",
+          glowing ? "animate-nft-glow" : ""
+        )}
         style={{
           background: "inherit",
-          filter: "blur(8px)",
-          opacity: 0.6,
+          filter: glowing ? "blur(12px)" : "blur(6px)",
+          opacity: glowing ? 0.8 : 0.5,
           zIndex: -1,
         }}
       />
@@ -58,7 +68,7 @@ const NFTAvatar = ({
         sizeClasses[size]
       )}>
         <img 
-          src={src} 
+          src={avatarSrc} 
           alt={alt}
           className="w-full h-full object-cover"
         />
