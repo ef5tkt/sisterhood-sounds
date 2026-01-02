@@ -145,6 +145,9 @@ const ProfilePage = () => {
       action: {
         label: "确认断开",
         onClick: () => {
+          // 清除钱包验证状态
+          localStorage.removeItem("wallet_connected");
+          localStorage.removeItem("invite_verified");
           toast.success("钱包已断开");
           navigate("/");
         },
