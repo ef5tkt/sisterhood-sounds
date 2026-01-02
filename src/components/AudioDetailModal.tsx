@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import {
   X, Play, Pause, Heart, MessageCircle, Bookmark, Share2,
@@ -157,7 +158,7 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
     delay: i * 0.03,
   }));
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 bg-background animate-fade-in flex flex-col">
       {/* 头部导航 */}
       <header className="flex-shrink-0 flex items-center justify-between px-4 h-14 border-b border-border bg-background safe-area-top">
@@ -374,7 +375,8 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
           </div>
         </div>
       </footer>
-    </div>
+    </div>,
+    document.body
   );
 };
 
