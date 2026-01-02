@@ -1,8 +1,20 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Headphones, Mic, Sparkles } from "lucide-react";
+import WalletGateModal, { isUserVerified } from "@/components/WalletGateModal";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const [showWalletModal, setShowWalletModal] = useState(false);
+
+  // 说一段话需要验证
+  const handleCreateClick = () => {
+    if (!isUserVerified()) {
+      setShowWalletModal(true);
+      return;
+    }
+    navigate("/create");
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -68,9 +80,9 @@ const HomePage = () => {
             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/10 to-transparent" />
           </button>
 
-          {/* 说一段话按钮 */}
+          {/* 说一段话按钮 - 需要验证 */}
           <button
-            onClick={() => navigate("/create")}
+            onClick={handleCreateClick}
             className="group relative w-full h-16 rounded-3xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 glass-card-solid border-2 border-foreground/10"
           >
             {/* 悬停光效 */}
@@ -90,6 +102,13 @@ const HomePage = () => {
           <span className="font-body">发现姐妹们的温暖故事</span>
         </div>
       </div>
+
+      {/* 钱包验证模态框 */}
+      <WalletGateModal
+        isOpen={showWalletModal}
+        onClose={() => setShowWalletModal(false)}
+        onSuccess={() => navigate("/create")}
+      />
     </div>
   );
 };
