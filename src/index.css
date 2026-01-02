@@ -3,134 +3,156 @@
 @tailwind utilities;
 
 /* 听她说 (Attention Please) - 女性声音疗愈社区设计系统
-   风格：极简、温暖、空灵、治愈
+   风格：可爱 Discord 社区感 + World of Women NFT 艺术风格
    All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    /* 核心品牌色 - 柔和粉色 */
-    --primary: 340 80% 85%;
-    --primary-foreground: 340 50% 25%;
+    /* 核心品牌色 - 珊瑚粉 */
+    --primary: 12 90% 70%;
+    --primary-foreground: 12 50% 15%;
     
-    /* 辅助色 - 淡紫 #E6E6FA */
-    --secondary: 240 67% 94%;
-    --secondary-foreground: 270 30% 35%;
+    /* 辅助色 - 薰衣草紫 */
+    --secondary: 270 50% 92%;
+    --secondary-foreground: 270 40% 25%;
     
-    /* 强调色 - 玫瑰粉 */
-    --accent: 350 85% 70%;
-    --accent-foreground: 350 50% 20%;
+    /* 强调色 - 亮橙 */
+    --accent: 25 95% 65%;
+    --accent-foreground: 25 60% 15%;
     
-    /* 背景 - 奶油色 #FFFDD0 */
+    /* 背景 - 奶白色 #FFFDD0 */
     --background: 55 100% 97%;
-    --foreground: 30 25% 20%;
+    --foreground: 30 30% 18%;
     
     /* 卡片 - 半透明磨砂白 */
     --card: 0 0% 100%;
-    --card-foreground: 30 25% 20%;
+    --card-foreground: 30 30% 18%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 30 25% 20%;
+    --popover-foreground: 30 30% 18%;
     
-    --muted: 30 20% 94%;
-    --muted-foreground: 30 15% 45%;
+    --muted: 45 30% 92%;
+    --muted-foreground: 30 20% 40%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 30 30% 88%;
-    --input: 30 30% 88%;
-    --ring: 30 100% 85%;
+    --border: 45 40% 85%;
+    --input: 45 40% 85%;
+    --ring: 12 90% 70%;
     
-    --radius: 1rem;
+    --radius: 1.25rem;
     
-    /* 自定义品牌变量 */
-    --sunset-orange: 340 80% 85%;
-    --sunset-deep: 350 85% 70%;
-    --lavender: 240 67% 94%;
-    --lavender-deep: 270 50% 80%;
+    /* 糖果色系 */
+    --candy-coral: 12 90% 70%;
+    --candy-orange: 25 95% 65%;
+    --candy-pink: 340 85% 75%;
+    --candy-mint: 160 60% 65%;
+    --candy-purple: 270 70% 75%;
+    
+    /* NFT 金色系 */
+    --nft-gold: 45 100% 55%;
+    --nft-glow: 45 100% 70%;
+    
+    /* 品牌变量 */
+    --sunset-orange: 12 90% 70%;
+    --sunset-deep: 350 85% 65%;
+    --lavender: 270 50% 92%;
+    --lavender-deep: 270 60% 75%;
     --cream: 55 100% 97%;
     --glass-white: 0 0% 100%;
     
     /* 渐变 */
-    --gradient-sunset: linear-gradient(135deg, hsl(340 80% 88%) 0%, hsl(270 50% 85%) 50%, hsl(350 85% 82%) 100%);
-    --gradient-flow: linear-gradient(45deg, hsl(340 80% 90%) 0%, hsl(270 60% 90%) 25%, hsl(350 80% 88%) 50%, hsl(240 67% 94%) 75%, hsl(340 80% 90%) 100%);
-    --gradient-glass: linear-gradient(135deg, hsla(0, 0%, 100%, 0.9) 0%, hsla(340, 30%, 98%, 0.7) 100%);
+    --gradient-sunset: linear-gradient(135deg, hsl(12 90% 75%) 0%, hsl(270 60% 85%) 50%, hsl(340 85% 80%) 100%);
+    --gradient-flow: linear-gradient(45deg, hsl(12 90% 80%) 0%, hsl(270 60% 85%) 25%, hsl(340 80% 82%) 50%, hsl(160 60% 80%) 75%, hsl(12 90% 80%) 100%);
+    --gradient-fluid: linear-gradient(135deg, hsl(340 70% 90%) 0%, hsl(270 50% 88%) 25%, hsl(200 60% 88%) 50%, hsl(160 50% 85%) 75%, hsl(340 70% 90%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(0, 0%, 100%, 0.95) 0%, hsla(45, 30%, 98%, 0.85) 100%);
     --gradient-shine: linear-gradient(120deg, hsla(0, 0%, 100%, 0) 30%, hsla(0, 0%, 100%, 0.8) 50%, hsla(0, 0%, 100%, 0) 70%);
+    --gradient-nft: linear-gradient(135deg, hsl(45 100% 60%) 0%, hsl(35 100% 55%) 50%, hsl(45 100% 65%) 100%);
     
-    /* 磨砂玻璃效果 - 增强版 */
-    --glass-bg: hsla(340, 20%, 100%, 0.65);
-    --glass-bg-light: hsla(0, 0%, 100%, 0.5);
-    --glass-bg-medium: hsla(340, 25%, 99%, 0.75);
-    --glass-bg-solid: hsla(340, 20%, 100%, 0.85);
-    --glass-border: hsla(340, 30%, 100%, 0.5);
-    --glass-border-light: hsla(0, 0%, 100%, 0.3);
-    --glass-border-strong: hsla(340, 40%, 100%, 0.7);
-    --glass-shadow: 0 8px 32px hsla(340, 60%, 50%, 0.12);
-    --glass-shadow-lg: 0 16px 48px hsla(340, 60%, 50%, 0.18);
-    --glass-shadow-glow: 0 0 40px hsla(340, 80%, 80%, 0.25);
-    --glass-inner-shadow: inset 0 1px 1px hsla(0, 0%, 100%, 0.6);
+    /* 磨砂玻璃效果 */
+    --glass-bg: hsla(45, 30%, 100%, 0.75);
+    --glass-bg-light: hsla(0, 0%, 100%, 0.6);
+    --glass-bg-medium: hsla(45, 25%, 99%, 0.85);
+    --glass-bg-solid: hsla(45, 20%, 100%, 0.92);
+    --glass-border: hsla(45, 40%, 90%, 0.8);
+    --glass-border-light: hsla(0, 0%, 100%, 0.5);
+    --glass-border-strong: hsla(45, 50%, 85%, 0.9);
+    --glass-shadow: 0 8px 32px hsla(30, 50%, 50%, 0.1);
+    --glass-shadow-lg: 0 16px 48px hsla(30, 50%, 50%, 0.15);
+    --glass-shadow-glow: 0 0 40px hsla(12, 90%, 70%, 0.2);
+    --glass-inner-shadow: inset 0 1px 1px hsla(0, 0%, 100%, 0.8);
     
     /* Sidebar */
     --sidebar-background: 55 100% 97%;
-    --sidebar-foreground: 30 25% 20%;
-    --sidebar-primary: 30 100% 85%;
-    --sidebar-primary-foreground: 30 60% 25%;
-    --sidebar-accent: 240 67% 94%;
-    --sidebar-accent-foreground: 270 30% 35%;
-    --sidebar-border: 30 30% 88%;
-    --sidebar-ring: 30 100% 85%;
+    --sidebar-foreground: 30 30% 18%;
+    --sidebar-primary: 12 90% 70%;
+    --sidebar-primary-foreground: 12 50% 15%;
+    --sidebar-accent: 270 50% 92%;
+    --sidebar-accent-foreground: 270 40% 25%;
+    --sidebar-border: 45 40% 85%;
+    --sidebar-ring: 12 90% 70%;
   }
 
   .dark {
-    --primary: 30 100% 80%;
-    --primary-foreground: 30 20% 10%;
+    --primary: 12 80% 65%;
+    --primary-foreground: 12 20% 95%;
     
-    --secondary: 270 40% 25%;
+    --secondary: 270 35% 25%;
     --secondary-foreground: 270 60% 90%;
     
-    --accent: 20 80% 65%;
-    --accent-foreground: 20 20% 10%;
+    --accent: 25 85% 55%;
+    --accent-foreground: 25 20% 95%;
     
     --background: 270 20% 8%;
-    --foreground: 30 30% 90%;
+    --foreground: 45 30% 90%;
     
     --card: 270 20% 12%;
-    --card-foreground: 30 30% 90%;
+    --card-foreground: 45 30% 90%;
     
     --popover: 270 20% 12%;
-    --popover-foreground: 30 30% 90%;
+    --popover-foreground: 45 30% 90%;
     
     --muted: 270 15% 18%;
-    --muted-foreground: 30 20% 65%;
+    --muted-foreground: 45 20% 60%;
     
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 270 15% 20%;
-    --input: 270 15% 20%;
-    --ring: 30 100% 80%;
+    --border: 270 15% 22%;
+    --input: 270 15% 22%;
+    --ring: 12 80% 65%;
     
-    --glass-bg: hsla(270, 20%, 15%, 0.65);
-    --glass-bg-light: hsla(270, 15%, 20%, 0.5);
-    --glass-bg-medium: hsla(270, 20%, 18%, 0.75);
-    --glass-bg-solid: hsla(270, 20%, 15%, 0.85);
+    --candy-coral: 12 80% 60%;
+    --candy-orange: 25 85% 55%;
+    --candy-pink: 340 75% 65%;
+    --candy-mint: 160 50% 50%;
+    --candy-purple: 270 60% 65%;
+    
+    --nft-gold: 45 90% 50%;
+    --nft-glow: 45 90% 60%;
+    
+    --glass-bg: hsla(270, 20%, 15%, 0.75);
+    --glass-bg-light: hsla(270, 15%, 20%, 0.6);
+    --glass-bg-medium: hsla(270, 20%, 18%, 0.85);
+    --glass-bg-solid: hsla(270, 20%, 15%, 0.92);
     --glass-border: hsla(270, 20%, 35%, 0.5);
     --glass-border-light: hsla(270, 15%, 40%, 0.3);
     --glass-border-strong: hsla(270, 25%, 45%, 0.7);
-    --glass-shadow: 0 8px 32px hsla(270, 30%, 10%, 0.25);
-    --glass-shadow-lg: 0 16px 48px hsla(270, 30%, 10%, 0.35);
-    --glass-shadow-glow: 0 0 40px hsla(270, 60%, 50%, 0.2);
+    --glass-shadow: 0 8px 32px hsla(270, 30%, 10%, 0.3);
+    --glass-shadow-lg: 0 16px 48px hsla(270, 30%, 10%, 0.4);
+    --glass-shadow-glow: 0 0 40px hsla(12, 80%, 50%, 0.2);
     --glass-inner-shadow: inset 0 1px 1px hsla(270, 20%, 50%, 0.3);
     
     --sidebar-background: 270 20% 10%;
-    --sidebar-foreground: 30 30% 90%;
-    --sidebar-primary: 30 100% 80%;
-    --sidebar-primary-foreground: 30 20% 10%;
-    --sidebar-accent: 270 40% 25%;
+    --sidebar-foreground: 45 30% 90%;
+    --sidebar-primary: 12 80% 65%;
+    --sidebar-primary-foreground: 12 20% 95%;
+    --sidebar-accent: 270 35% 25%;
     --sidebar-accent-foreground: 270 60% 90%;
-    --sidebar-border: 270 15% 20%;
-    --sidebar-ring: 30 100% 80%;
+    --sidebar-border: 270 15% 22%;
+    --sidebar-ring: 12 80% 65%;
   }
 }
 
@@ -140,15 +162,17 @@
   }
   
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased font-sans;
+    /* 添加轻微噪点纹理 */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
   }
 }
 
 @layer components {
-  /* 基础磨砂玻璃卡片 */
+  /* 基础磨砂玻璃卡片 - 更大圆角 */
   .glass-card {
     @apply bg-[var(--glass-bg)] backdrop-blur-xl border border-[var(--glass-border)] 
-           shadow-[var(--glass-shadow)] transition-all duration-300;
+           rounded-3xl shadow-[var(--glass-shadow)] transition-all duration-300;
     box-shadow: var(--glass-shadow), var(--glass-inner-shadow);
   }
   
@@ -167,49 +191,83 @@
   /* 轻量磨砂卡片 */
   .glass-card-light {
     @apply bg-[var(--glass-bg-light)] backdrop-blur-md border border-[var(--glass-border-light)]
-           shadow-sm transition-all duration-300;
+           rounded-3xl shadow-sm transition-all duration-300;
   }
   
-  /* 实心磨砂卡片 */
-  .glass-card-solid {
+  /* 实心磨砂卡片 - Discord 面板风格 */
+  .glass-panel {
     @apply bg-[var(--glass-bg-solid)] backdrop-blur-2xl border border-[var(--glass-border)]
-           shadow-[var(--glass-shadow-lg)] transition-all duration-300;
+           rounded-super shadow-[var(--glass-shadow-lg)] transition-all duration-300;
     box-shadow: var(--glass-shadow-lg), var(--glass-inner-shadow);
+  }
+  
+  /* 糖果按钮基础样式 */
+  .candy-button {
+    @apply px-6 py-3 rounded-full font-bold text-sm transition-all duration-200
+           shadow-lg hover:shadow-xl active:scale-95;
+  }
+  
+  .candy-button-coral {
+    @apply candy-button bg-candy-coral text-white hover:brightness-110;
+  }
+  
+  .candy-button-orange {
+    @apply candy-button bg-candy-orange text-white hover:brightness-110;
+  }
+  
+  .candy-button-pink {
+    @apply candy-button bg-candy-pink text-white hover:brightness-110;
+  }
+  
+  /* NFT 头像边框 */
+  .nft-avatar-ring {
+    @apply relative rounded-full p-1;
+    background: var(--gradient-nft);
+    animation: nft-glow 2s ease-in-out infinite;
+  }
+  
+  .nft-avatar-ring::before {
+    content: '';
+    @apply absolute inset-0 rounded-full;
+    background: inherit;
+    filter: blur(8px);
+    opacity: 0.5;
+    z-index: -1;
   }
   
   /* 磨砂玻璃按钮 */
   .glass-button {
     @apply bg-[var(--glass-bg)] backdrop-blur-xl border border-[var(--glass-border)] 
-           hover:bg-[var(--glass-bg-medium)] transition-all duration-300 
-           shadow-lg hover:shadow-xl active:scale-[0.98];
+           rounded-full hover:bg-[var(--glass-bg-medium)] transition-all duration-300 
+           shadow-lg hover:shadow-xl active:scale-95;
     box-shadow: var(--glass-shadow), var(--glass-inner-shadow);
   }
   
   /* 磨砂玻璃输入框 */
   .glass-input {
     @apply bg-[var(--glass-bg-light)] backdrop-blur-md border border-[var(--glass-border-light)]
-           focus:bg-[var(--glass-bg)] focus:border-[var(--glass-border-strong)]
+           rounded-2xl focus:bg-[var(--glass-bg)] focus:border-[var(--glass-border-strong)]
            transition-all duration-300 outline-none;
   }
   
-  /* 磨砂玻璃导航栏 */
-  .glass-nav {
-    @apply bg-[var(--glass-bg-solid)] backdrop-blur-2xl border-b border-[var(--glass-border)]
-           shadow-sm;
-    box-shadow: 0 4px 20px hsla(340, 40%, 50%, 0.08);
+  /* 磨砂玻璃导航栏 - 底部风格 */
+  .glass-nav-bottom {
+    @apply bg-[var(--glass-bg-solid)] backdrop-blur-2xl border-t border-[var(--glass-border)]
+           rounded-t-3xl;
+    box-shadow: 0 -4px 20px hsla(30, 40%, 50%, 0.08);
   }
   
   /* 磨砂玻璃弹窗 */
   .glass-modal {
     @apply bg-[var(--glass-bg-solid)] backdrop-blur-2xl border border-[var(--glass-border-strong)]
-           shadow-2xl;
-    box-shadow: var(--glass-shadow-lg), var(--glass-inner-shadow), 0 0 80px hsla(340, 60%, 50%, 0.1);
+           rounded-super shadow-2xl;
+    box-shadow: var(--glass-shadow-lg), var(--glass-inner-shadow), 0 0 80px hsla(12, 60%, 50%, 0.1);
   }
   
   /* 磨砂玻璃徽章 */
   .glass-badge {
     @apply bg-[var(--glass-bg-light)] backdrop-blur-md border border-[var(--glass-border-light)]
-           px-3 py-1 rounded-full text-sm font-medium;
+           px-4 py-1.5 rounded-full text-sm font-semibold;
   }
   
   /* 彩虹边框效果 */
@@ -221,11 +279,11 @@
     content: '';
     @apply absolute inset-0 -z-10;
     background: linear-gradient(135deg, 
-      hsla(340, 80%, 85%, 0.5) 0%, 
-      hsla(270, 60%, 85%, 0.5) 25%,
-      hsla(350, 85%, 82%, 0.5) 50%,
-      hsla(240, 67%, 94%, 0.5) 75%,
-      hsla(340, 80%, 85%, 0.5) 100%
+      hsla(12, 90%, 70%, 0.5) 0%, 
+      hsla(270, 60%, 75%, 0.5) 25%,
+      hsla(340, 85%, 75%, 0.5) 50%,
+      hsla(160, 60%, 70%, 0.5) 75%,
+      hsla(12, 90%, 70%, 0.5) 100%
     );
     background-size: 200% 200%;
     animation: gradient-flow 8s ease infinite;
@@ -246,16 +304,11 @@
     opacity: 0.5;
   }
   
-  /* 波纹效果容器 */
-  .ripple-container {
-    @apply relative overflow-hidden;
-  }
-  
   /* 流动背景 */
   .flowing-gradient {
-    background: var(--gradient-flow);
+    background: var(--gradient-fluid);
     background-size: 400% 400%;
-    animation: gradient-flow 15s ease infinite;
+    animation: fluid-bg 20s ease infinite;
   }
   
   /* 磨砂玻璃遮罩 */
@@ -263,10 +316,30 @@
     @apply fixed inset-0 bg-background/60 backdrop-blur-sm;
   }
   
-  /* 磨砂圆形头像边框 */
-  .glass-avatar-ring {
-    @apply ring-4 ring-[var(--glass-border)] shadow-lg;
-    box-shadow: var(--glass-shadow), var(--glass-shadow-glow);
+  /* 全屏滑动容器 */
+  .snap-container {
+    @apply h-screen overflow-y-scroll snap-y snap-mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .snap-item {
+    @apply h-screen w-full snap-start snap-always;
+  }
+  
+  /* 音频可视化条 */
+  .audio-bar {
+    @apply w-1 bg-primary rounded-full;
+    animation: audio-wave 1s ease-in-out infinite;
+  }
+  
+  /* Discord 风格填充图标 */
+  .icon-filled {
+    @apply transition-all duration-200;
+  }
+  
+  .icon-filled-active {
+    @apply text-primary scale-110;
   }
 }
 
@@ -281,6 +354,19 @@
     }
     100% {
       background-position: 0% 50%;
+    }
+  }
+  
+  /* 流体背景动画 */
+  @keyframes fluid-bg {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
     }
   }
   
@@ -333,15 +419,39 @@
   /* 脉冲光晕 */
   @keyframes pulse-glow {
     0%, 100% {
-      box-shadow: 0 0 20px hsla(30, 100%, 85%, 0.4);
+      box-shadow: 0 0 20px hsla(12, 90%, 70%, 0.4);
     }
     50% {
-      box-shadow: 0 0 40px hsla(30, 100%, 85%, 0.7);
+      box-shadow: 0 0 40px hsla(12, 90%, 70%, 0.7);
+    }
+  }
+  
+  /* NFT 发光 */
+  @keyframes nft-glow {
+    0%, 100% {
+      box-shadow: 0 0 15px hsla(45, 100%, 60%, 0.5), 0 0 30px hsla(45, 100%, 60%, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 25px hsla(45, 100%, 70%, 0.7), 0 0 50px hsla(45, 100%, 60%, 0.4);
+    }
+  }
+  
+  /* 音频波形 */
+  @keyframes audio-wave {
+    0%, 100% {
+      height: 20%;
+    }
+    50% {
+      height: 100%;
     }
   }
   
   .animate-gradient-flow {
     animation: gradient-flow 15s ease infinite;
+  }
+  
+  .animate-fluid-bg {
+    animation: fluid-bg 20s ease infinite;
   }
   
   .animate-ripple {
@@ -362,6 +472,10 @@
   
   .animate-pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  .animate-nft-glow {
+    animation: nft-glow 2s ease-in-out infinite;
   }
   
   /* 缩放进入 */
@@ -413,14 +527,44 @@
   /* 光晕扩散 */
   @keyframes glow-spread {
     0%, 100% {
-      box-shadow: 0 0 20px hsla(340, 80%, 80%, 0.3);
+      box-shadow: 0 0 20px hsla(12, 90%, 70%, 0.3);
     }
     50% {
-      box-shadow: 0 0 60px hsla(340, 80%, 80%, 0.5), 0 0 100px hsla(270, 60%, 80%, 0.3);
+      box-shadow: 0 0 60px hsla(12, 90%, 70%, 0.5), 0 0 100px hsla(270, 60%, 75%, 0.3);
     }
   }
   
   .animate-glow-spread {
     animation: glow-spread 3s ease-in-out infinite;
+  }
+  
+  /* 滑入上 */
+  @keyframes slide-up {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  /* 按钮按压效果 */
+  .press-effect {
+    @apply transition-transform duration-150 active:scale-95;
+  }
+  
+  /* 选中跳动效果 */
+  .bounce-on-select {
+    @apply transition-transform duration-300;
+  }
+  
+  .bounce-on-select.active {
+    animation: bounce-select 0.3s ease-out;
   }
 }
