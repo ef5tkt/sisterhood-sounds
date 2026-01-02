@@ -1,4 +1,4 @@
-import { Music, Plus, Search, Bell } from "lucide-react";
+import { Music, Plus, Search, Bell, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -34,6 +34,17 @@ const Navbar = () => {
 
         {/* 右侧操作区 */}
         <div className="flex items-center gap-3">
+          {/* 接龙按钮 */}
+          <button
+            onClick={() => navigate("/relay")}
+            className="hidden sm:flex items-center gap-1.5 h-10 px-3 rounded-xl
+                     bg-secondary/50 hover:bg-secondary text-muted-foreground hover:text-foreground
+                     transition-all duration-300"
+          >
+            <Radio className="w-4 h-4" />
+            <span className="text-sm">接龙</span>
+          </button>
+
           {/* 创作按钮 */}
           <Button
             onClick={() => navigate("/create")}
@@ -46,11 +57,14 @@ const Navbar = () => {
           </Button>
 
           {/* 通知 */}
-          <button className="relative w-10 h-10 flex items-center justify-center rounded-xl
+          <button 
+            onClick={() => navigate("/notifications")}
+            className="relative w-10 h-10 flex items-center justify-center rounded-xl
                            bg-secondary/50 hover:bg-secondary text-muted-foreground hover:text-foreground
-                           transition-all duration-300">
+                           transition-all duration-300"
+          >
             <Bell className="w-5 h-5" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full animate-pulse" />
           </button>
 
           {/* 用户头像 */}
