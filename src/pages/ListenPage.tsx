@@ -6,6 +6,7 @@ import { mockAudios, AudioItem } from "@/data/mockAudios";
 import NFTAvatar from "@/components/NFTAvatar";
 import AudioVisualizer from "@/components/AudioVisualizer";
 import TagFilterMenu from "@/components/TagFilterMenu";
+import WalletGateModal, { isUserVerified } from "@/components/WalletGateModal";
 import { cn } from "@/lib/utils";
 
 // 标签映射
@@ -26,6 +27,8 @@ const ListenPage = () => {
   const [showTagMenu, setShowTagMenu] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentTag, setCurrentTag] = useState<string>("兔子洞");
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [pendingAction, setPendingAction] = useState<"save" | "comment" | null>(null);
 
   // 根据标签获取随机音频
   const getRandomAudio = useCallback((tag?: string) => {
@@ -91,11 +94,10 @@ const ListenPage = () => {
     switchAudio(tag);
   };
 
-  // 点赞处理
+  // 点赞处理 - 所有人都可以
   const handleLike = () => {
     setIsLiked(!isLiked);
     if (!isLiked) {
-      // 触发震动反馈
       if (navigator.vibrate) {
         navigator.vibrate(50);
       }
@@ -105,22 +107,51 @@ const ListenPage = () => {
     }
   };
 
-  // 收藏处理
+  // 收藏处理 - 需要验证
   const handleSave = () => {
+    if (!isUserVerified()) {
+      setPendingAction("save");
+      setShowWalletModal(true);
+      return;
+    }
     setIsSaved(!isSaved);
     if (!isSaved) {
       toast.success("已收藏到你的珍藏 ⭐");
     }
   };
 
-  // 评论处理
+  // 评论处理 - 需要验证
   const handleComment = () => {
+    if (!isUserVerified()) {
+      setPendingAction("comment");
+      setShowWalletModal(true);
+      return;
+    }
     toast("评论功能即将开放 💬");
   };
 
-  // 分享处理
+  // 分享处理 - 所有人都可以
   const handleShare = () => {
     toast.success("已复制分享链接 🔗");
+  };
+
+  // 钱包验证成功后的回调
+  const handleWalletSuccess = () => {
+    if (pendingAction === "save") {
+      setIsSaved(true);
+      toast.success("已收藏到你的珍藏 ⭐");
+    } else if (pendingAction === "comment") {
+      toast("评论功能即将开放 💬");
+    }
+    setPendingAction(null);
+  };
+
+  // 点击头像跳转到发布者主页
+  const handleAvatarClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (currentAudio) {
+      navigate(`/profile/${currentAudio.id}`);
+    }
   };
 
   if (!currentAudio) {
@@ -169,7 +200,7 @@ const ListenPage = () => {
         </div>
       </div>
 
-      {/* 主内容区域 - 可点击唤起标签菜单 */}
+      {/* 主内容区域 - 点击屏幕唤起标签菜单 */}
       <div 
         className={cn(
           "relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-20 pb-32 transition-opacity duration-500",
@@ -177,8 +208,11 @@ const ListenPage = () => {
         )}
         onClick={() => setShowTagMenu(true)}
       >
-        {/* NFT 风格头像 */}
-        <div className="mb-8 animate-fade-in">
+        {/* NFT 风格头像 - 点击跳转个人主页 */}
+        <div 
+          className="mb-8 animate-fade-in cursor-pointer"
+          onClick={handleAvatarClick}
+        >
           <NFTAvatar 
             src={currentAudio.avatar}
             size="xl"
@@ -193,7 +227,10 @@ const ListenPage = () => {
 
         {/* 作者和标题 */}
         <div className="text-center mb-8 max-w-md">
-          <h2 className="text-sm font-medium text-muted-foreground mb-2 font-body">
+          <h2 
+            className="text-sm font-medium text-muted-foreground mb-2 font-body cursor-pointer hover:text-foreground transition-colors"
+            onClick={handleAvatarClick}
+          >
             {currentAudio.author}
           </h2>
           <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground leading-tight mb-4">
@@ -213,7 +250,7 @@ const ListenPage = () => {
       {/* 底部互动按钮 */}
       <div className="fixed bottom-8 left-0 right-0 z-20 px-6 safe-area-bottom">
         <div className="flex items-center justify-center gap-4">
-          {/* 点赞 */}
+          {/* 点赞 - 所有人可用 */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -233,7 +270,7 @@ const ListenPage = () => {
             />
           </button>
 
-          {/* 收藏 */}
+          {/* 收藏 - 需要验证 */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -253,7 +290,7 @@ const ListenPage = () => {
             />
           </button>
 
-          {/* 评论 */}
+          {/* 评论 - 需要验证 */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -264,7 +301,7 @@ const ListenPage = () => {
             <MessageCircle className="w-7 h-7 text-foreground/70" />
           </button>
 
-          {/* 分享 */}
+          {/* 分享 - 所有人可用 */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -283,6 +320,16 @@ const ListenPage = () => {
         onClose={() => setShowTagMenu(false)}
         onSelectTag={handleTagSelect}
         currentTag={currentTag}
+      />
+
+      {/* 钱包验证模态框 */}
+      <WalletGateModal
+        isOpen={showWalletModal}
+        onClose={() => {
+          setShowWalletModal(false);
+          setPendingAction(null);
+        }}
+        onSuccess={handleWalletSuccess}
       />
     </div>
   );
