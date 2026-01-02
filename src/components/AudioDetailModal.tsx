@@ -158,29 +158,22 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
   }));
 
   return (
-    <div className="fixed inset-0 z-50 animate-fade-in">
-      {/* 全屏背景遮罩 - 完全不透明 */}
-      <div
-        className="absolute inset-0 bg-background"
-        onClick={onClose}
-      />
+    <div className="fixed inset-0 z-50 bg-background animate-fade-in flex flex-col">
+      {/* 头部导航 */}
+      <header className="flex-shrink-0 flex items-center justify-between px-4 h-14 border-b border-border bg-background safe-area-top">
+        <button
+          onClick={onClose}
+          className="w-10 h-10 rounded-full bg-secondary hover:bg-secondary/80 flex items-center justify-center transition-colors"
+        >
+          <X className="w-5 h-5 text-foreground" />
+        </button>
+        <h3 className="font-display text-lg font-semibold text-foreground">作品详情</h3>
+        <div className="w-10" />
+      </header>
 
-      {/* 弹窗内容 - 全屏 */}
-      <div className="relative w-full h-full bg-background flex flex-col">
-        {/* 头部 */}
-        <div className="flex items-center justify-between p-4 border-b border-border bg-background">
-          <button
-            onClick={onClose}
-            className="w-10 h-10 rounded-full bg-secondary hover:bg-secondary/80 flex items-center justify-center transition-colors"
-          >
-            <X className="w-5 h-5 text-foreground" />
-          </button>
-          <h3 className="font-display text-lg font-semibold text-foreground">作品详情</h3>
-          <div className="w-10" /> {/* 占位保持居中 */}
-        </div>
-
-        {/* 可滚动内容区 */}
-        <div className="flex-1 overflow-y-auto bg-background">
+      {/* 可滚动内容区 - 自适应填充剩余空间 */}
+      <main className="flex-1 overflow-y-auto bg-background">
+        <div className="max-w-2xl mx-auto">
           {/* 作者信息 */}
           <div className="p-4 border-b border-border">
             <div className="flex items-center gap-3">
@@ -353,34 +346,34 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
             </div>
           </div>
         </div>
+      </main>
 
-        {/* 评论输入框 - 固定在底部 */}
-        <div className="p-4 border-t border-border bg-background">
-          <div className="flex gap-3">
-            <img
-              src="https://api.dicebear.com/7.x/lorelei/svg?seed=user"
-              alt="我的头像"
-              className="w-9 h-9 rounded-full flex-shrink-0"
+      {/* 评论输入框 - 固定在底部 */}
+      <footer className="flex-shrink-0 p-4 border-t border-border bg-background safe-area-bottom">
+        <div className="max-w-2xl mx-auto flex gap-3">
+          <img
+            src="https://api.dicebear.com/7.x/lorelei/svg?seed=user"
+            alt="我的头像"
+            className="w-9 h-9 rounded-full flex-shrink-0"
+          />
+          <div className="flex-1 flex gap-2">
+            <Textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="写下你的评论..."
+              className="bg-secondary/50 border-border min-h-[40px] max-h-[100px] py-2 px-3 rounded-xl resize-none text-sm"
+              rows={1}
             />
-            <div className="flex-1 flex gap-2">
-              <Textarea
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="写下你的评论..."
-                className="bg-secondary/50 border-border min-h-[40px] max-h-[100px] py-2 px-3 rounded-xl resize-none text-sm"
-                rows={1}
-              />
-              <Button
-                onClick={handleSendComment}
-                size="icon"
-                className="h-10 w-10 rounded-xl bg-primary hover:bg-primary/90 flex-shrink-0"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
+            <Button
+              onClick={handleSendComment}
+              size="icon"
+              className="h-10 w-10 rounded-xl bg-primary hover:bg-primary/90 flex-shrink-0"
+            >
+              <Send className="w-4 h-4" />
+            </Button>
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 };
