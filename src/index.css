@@ -55,11 +55,21 @@
     /* 渐变 */
     --gradient-sunset: linear-gradient(135deg, hsl(340 80% 88%) 0%, hsl(270 50% 85%) 50%, hsl(350 85% 82%) 100%);
     --gradient-flow: linear-gradient(45deg, hsl(340 80% 90%) 0%, hsl(270 60% 90%) 25%, hsl(350 80% 88%) 50%, hsl(240 67% 94%) 75%, hsl(340 80% 90%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(0, 0%, 100%, 0.9) 0%, hsla(340, 30%, 98%, 0.7) 100%);
+    --gradient-shine: linear-gradient(120deg, hsla(0, 0%, 100%, 0) 30%, hsla(0, 0%, 100%, 0.8) 50%, hsla(0, 0%, 100%, 0) 70%);
     
-    /* 磨砂玻璃效果 */
-    --glass-bg: hsla(340, 20%, 100%, 0.7);
-    --glass-border: hsla(340, 30%, 100%, 0.4);
-    --glass-shadow: 0 8px 32px hsla(340, 60%, 50%, 0.15);
+    /* 磨砂玻璃效果 - 增强版 */
+    --glass-bg: hsla(340, 20%, 100%, 0.65);
+    --glass-bg-light: hsla(0, 0%, 100%, 0.5);
+    --glass-bg-medium: hsla(340, 25%, 99%, 0.75);
+    --glass-bg-solid: hsla(340, 20%, 100%, 0.85);
+    --glass-border: hsla(340, 30%, 100%, 0.5);
+    --glass-border-light: hsla(0, 0%, 100%, 0.3);
+    --glass-border-strong: hsla(340, 40%, 100%, 0.7);
+    --glass-shadow: 0 8px 32px hsla(340, 60%, 50%, 0.12);
+    --glass-shadow-lg: 0 16px 48px hsla(340, 60%, 50%, 0.18);
+    --glass-shadow-glow: 0 0 40px hsla(340, 80%, 80%, 0.25);
+    --glass-inner-shadow: inset 0 1px 1px hsla(0, 0%, 100%, 0.6);
     
     /* Sidebar */
     --sidebar-background: 55 100% 97%;
@@ -101,9 +111,17 @@
     --input: 270 15% 20%;
     --ring: 30 100% 80%;
     
-    --glass-bg: hsla(270, 20%, 15%, 0.7);
-    --glass-border: hsla(270, 20%, 25%, 0.4);
-    --glass-shadow: 0 8px 32px hsla(270, 30%, 10%, 0.3);
+    --glass-bg: hsla(270, 20%, 15%, 0.65);
+    --glass-bg-light: hsla(270, 15%, 20%, 0.5);
+    --glass-bg-medium: hsla(270, 20%, 18%, 0.75);
+    --glass-bg-solid: hsla(270, 20%, 15%, 0.85);
+    --glass-border: hsla(270, 20%, 35%, 0.5);
+    --glass-border-light: hsla(270, 15%, 40%, 0.3);
+    --glass-border-strong: hsla(270, 25%, 45%, 0.7);
+    --glass-shadow: 0 8px 32px hsla(270, 30%, 10%, 0.25);
+    --glass-shadow-lg: 0 16px 48px hsla(270, 30%, 10%, 0.35);
+    --glass-shadow-glow: 0 0 40px hsla(270, 60%, 50%, 0.2);
+    --glass-inner-shadow: inset 0 1px 1px hsla(270, 20%, 50%, 0.3);
     
     --sidebar-background: 270 20% 10%;
     --sidebar-foreground: 30 30% 90%;
@@ -127,15 +145,105 @@
 }
 
 @layer components {
-  /* 磨砂玻璃卡片 */
+  /* 基础磨砂玻璃卡片 */
   .glass-card {
-    @apply bg-[var(--glass-bg)] backdrop-blur-xl border border-[var(--glass-border)] shadow-[var(--glass-shadow)];
+    @apply bg-[var(--glass-bg)] backdrop-blur-xl border border-[var(--glass-border)] 
+           shadow-[var(--glass-shadow)] transition-all duration-300;
+    box-shadow: var(--glass-shadow), var(--glass-inner-shadow);
+  }
+  
+  /* 悬浮增强效果 */
+  .glass-card-hover {
+    @apply glass-card hover:bg-[var(--glass-bg-medium)] hover:shadow-[var(--glass-shadow-lg)]
+           hover:border-[var(--glass-border-strong)] hover:scale-[1.02];
+  }
+  
+  /* 发光磨砂卡片 */
+  .glass-card-glow {
+    @apply glass-card;
+    box-shadow: var(--glass-shadow), var(--glass-inner-shadow), var(--glass-shadow-glow);
+  }
+  
+  /* 轻量磨砂卡片 */
+  .glass-card-light {
+    @apply bg-[var(--glass-bg-light)] backdrop-blur-md border border-[var(--glass-border-light)]
+           shadow-sm transition-all duration-300;
+  }
+  
+  /* 实心磨砂卡片 */
+  .glass-card-solid {
+    @apply bg-[var(--glass-bg-solid)] backdrop-blur-2xl border border-[var(--glass-border)]
+           shadow-[var(--glass-shadow-lg)] transition-all duration-300;
+    box-shadow: var(--glass-shadow-lg), var(--glass-inner-shadow);
   }
   
   /* 磨砂玻璃按钮 */
   .glass-button {
     @apply bg-[var(--glass-bg)] backdrop-blur-xl border border-[var(--glass-border)] 
-           hover:bg-white/80 transition-all duration-300 shadow-lg hover:shadow-xl;
+           hover:bg-[var(--glass-bg-medium)] transition-all duration-300 
+           shadow-lg hover:shadow-xl active:scale-[0.98];
+    box-shadow: var(--glass-shadow), var(--glass-inner-shadow);
+  }
+  
+  /* 磨砂玻璃输入框 */
+  .glass-input {
+    @apply bg-[var(--glass-bg-light)] backdrop-blur-md border border-[var(--glass-border-light)]
+           focus:bg-[var(--glass-bg)] focus:border-[var(--glass-border-strong)]
+           transition-all duration-300 outline-none;
+  }
+  
+  /* 磨砂玻璃导航栏 */
+  .glass-nav {
+    @apply bg-[var(--glass-bg-solid)] backdrop-blur-2xl border-b border-[var(--glass-border)]
+           shadow-sm;
+    box-shadow: 0 4px 20px hsla(340, 40%, 50%, 0.08);
+  }
+  
+  /* 磨砂玻璃弹窗 */
+  .glass-modal {
+    @apply bg-[var(--glass-bg-solid)] backdrop-blur-2xl border border-[var(--glass-border-strong)]
+           shadow-2xl;
+    box-shadow: var(--glass-shadow-lg), var(--glass-inner-shadow), 0 0 80px hsla(340, 60%, 50%, 0.1);
+  }
+  
+  /* 磨砂玻璃徽章 */
+  .glass-badge {
+    @apply bg-[var(--glass-bg-light)] backdrop-blur-md border border-[var(--glass-border-light)]
+           px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  /* 彩虹边框效果 */
+  .glass-rainbow {
+    @apply relative overflow-hidden;
+  }
+  
+  .glass-rainbow::before {
+    content: '';
+    @apply absolute inset-0 -z-10;
+    background: linear-gradient(135deg, 
+      hsla(340, 80%, 85%, 0.5) 0%, 
+      hsla(270, 60%, 85%, 0.5) 25%,
+      hsla(350, 85%, 82%, 0.5) 50%,
+      hsla(240, 67%, 94%, 0.5) 75%,
+      hsla(340, 80%, 85%, 0.5) 100%
+    );
+    background-size: 200% 200%;
+    animation: gradient-flow 8s ease infinite;
+    filter: blur(20px);
+  }
+  
+  /* 闪光效果 */
+  .glass-shine {
+    @apply relative overflow-hidden;
+  }
+  
+  .glass-shine::after {
+    content: '';
+    @apply absolute inset-0 -z-0 pointer-events-none;
+    background: var(--gradient-shine);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+    opacity: 0.5;
   }
   
   /* 波纹效果容器 */
@@ -148,6 +256,17 @@
     background: var(--gradient-flow);
     background-size: 400% 400%;
     animation: gradient-flow 15s ease infinite;
+  }
+  
+  /* 磨砂玻璃遮罩 */
+  .glass-overlay {
+    @apply fixed inset-0 bg-background/60 backdrop-blur-sm;
+  }
+  
+  /* 磨砂圆形头像边框 */
+  .glass-avatar-ring {
+    @apply ring-4 ring-[var(--glass-border)] shadow-lg;
+    box-shadow: var(--glass-shadow), var(--glass-shadow-glow);
   }
 }
 
@@ -243,5 +362,65 @@
   
   .animate-pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  /* 缩放进入 */
+  @keyframes scale-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out forwards;
+  }
+  
+  /* 淡入 */
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+  }
+  
+  /* 模糊进入 */
+  @keyframes blur-in {
+    0% {
+      opacity: 0;
+      filter: blur(10px);
+    }
+    100% {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+  
+  .animate-blur-in {
+    animation: blur-in 0.5s ease-out forwards;
+  }
+  
+  /* 光晕扩散 */
+  @keyframes glow-spread {
+    0%, 100% {
+      box-shadow: 0 0 20px hsla(340, 80%, 80%, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 60px hsla(340, 80%, 80%, 0.5), 0 0 100px hsla(270, 60%, 80%, 0.3);
+    }
+  }
+  
+  .animate-glow-spread {
+    animation: glow-spread 3s ease-in-out infinite;
   }
 }

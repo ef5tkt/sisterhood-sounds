@@ -98,7 +98,7 @@ const AudioCard = ({
   }));
 
   return (
-    <div className="glass-card rounded-2xl p-5 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group">
+    <div className="glass-card-hover rounded-2xl p-5 group">
       {/* 顶部：作者信息 */}
       <div className="flex items-center gap-3 mb-4">
         <div className="relative">
