@@ -122,7 +122,7 @@ const RelayPage = () => {
     if (selectedTopic) {
       setSelectedTopic(null);
     } else {
-      navigate("/home");
+      navigate("/");
     }
   };
 
