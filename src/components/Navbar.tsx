@@ -1,8 +1,9 @@
-import { Music, Plus, User, Search, Bell } from "lucide-react";
+import { Music, Plus, Search, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
     <nav className="sticky top-0 z-50 glass-card border-b border-border/30">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -35,6 +36,7 @@ const Navbar = () => {
         <div className="flex items-center gap-3">
           {/* 创作按钮 */}
           <Button
+            onClick={() => navigate("/create")}
             className="h-10 px-4 bg-primary hover:bg-primary/90 text-primary-foreground 
                      rounded-xl font-medium shadow-md shadow-primary/20
                      hover:shadow-lg hover:shadow-primary/30 transition-all duration-300"
