@@ -83,7 +83,7 @@ const HomePage = () => {
           {/* 说一段话按钮 - 需要验证 */}
           <button
             onClick={handleCreateClick}
-            className="group relative w-full h-16 rounded-3xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 glass-card-solid border-2 border-foreground/10"
+            className="group relative w-full h-16 rounded-3xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 bg-card/90 backdrop-blur-xl border-2 border-border shadow-lg"
           >
             {/* 悬停光效 */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-candy-lavender/30 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />
