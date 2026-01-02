@@ -158,25 +158,25 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
   }));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fade-in">
-      {/* 背景遮罩 */}
+    <div className="fixed inset-0 z-50 animate-fade-in">
+      {/* 全屏背景遮罩 - 完全不透明 */}
       <div
-        className="absolute inset-0 bg-foreground/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-background"
         onClick={onClose}
       />
 
-      {/* 弹窗内容 - 实心背景 */}
-      <div className="relative w-full max-w-lg max-h-[90vh] bg-background rounded-t-3xl sm:rounded-3xl 
-                    overflow-hidden animate-scale-in flex flex-col shadow-2xl border border-border">
+      {/* 弹窗内容 - 全屏 */}
+      <div className="relative w-full h-full bg-background flex flex-col">
         {/* 头部 */}
         <div className="flex items-center justify-between p-4 border-b border-border bg-background">
-          <h3 className="font-display text-lg font-semibold text-foreground">作品详情</h3>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-secondary hover:bg-secondary/80 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-full bg-secondary hover:bg-secondary/80 flex items-center justify-center transition-colors"
           >
-            <X className="w-4 h-4 text-muted-foreground" />
+            <X className="w-5 h-5 text-foreground" />
           </button>
+          <h3 className="font-display text-lg font-semibold text-foreground">作品详情</h3>
+          <div className="w-10" /> {/* 占位保持居中 */}
         </div>
 
         {/* 可滚动内容区 */}
