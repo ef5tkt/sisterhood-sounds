@@ -81,6 +81,7 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
   const [isPlaying, setIsPlaying] = useState(false);
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [likeCount, setLikeCount] = useState(audio.likes);
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState(mockComments);
@@ -114,6 +115,15 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
     toast.success("分享链接已复制 ✨", {
       description: "把温暖传递给更多人",
     });
+  };
+
+  const handleFollow = () => {
+    setIsFollowing(!isFollowing);
+    if (!isFollowing) {
+      toast.success(`已关注 ${audio.author} 💜`);
+    } else {
+      toast(`已取消关注 ${audio.author}`);
+    }
   };
 
   const handleSendComment = () => {
@@ -201,11 +211,16 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
                 </div>
               </div>
               <Button
+                onClick={handleFollow}
                 size="sm"
-                variant="outline"
-                className="h-8 px-3 rounded-lg"
+                variant={isFollowing ? "secondary" : "default"}
+                className={`h-8 px-4 rounded-lg transition-all ${
+                  isFollowing 
+                    ? "bg-secondary text-foreground hover:bg-secondary/80" 
+                    : "bg-primary text-primary-foreground hover:bg-primary/90"
+                }`}
               >
-                关注
+                {isFollowing ? "已关注" : "+ 关注"}
               </Button>
             </div>
           </div>
