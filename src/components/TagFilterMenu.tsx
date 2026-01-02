@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils";
-import { Sparkles, BookOpen, Lightbulb, Rabbit, Users } from "lucide-react";
+import { Sparkles, BookOpen, Lightbulb, Rabbit, Users, Mic } from "lucide-react";
 
 interface TagFilterMenuProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectTag: (tag: string) => void;
+  onCreateClick: () => void;
   currentTag: string;
 }
 
@@ -16,7 +17,7 @@ const tags = [
   { id: "共创", label: "共创", icon: Users, color: "from-blue-400 to-indigo-500" },
 ];
 
-const TagFilterMenu = ({ isOpen, onClose, onSelectTag, currentTag }: TagFilterMenuProps) => {
+const TagFilterMenu = ({ isOpen, onClose, onSelectTag, onCreateClick, currentTag }: TagFilterMenuProps) => {
   if (!isOpen) return null;
 
   return (
@@ -100,6 +101,17 @@ const TagFilterMenu = ({ isOpen, onClose, onSelectTag, currentTag }: TagFilterMe
                 )}
               </button>
             ))}
+          </div>
+
+          {/* 创作入口 */}
+          <div className="mt-4 pt-4 border-t border-border/30">
+            <button
+              onClick={onCreateClick}
+              className="w-full flex items-center justify-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-primary/80 to-primary text-primary-foreground hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-lg"
+            >
+              <Mic className="w-6 h-6" />
+              <span className="text-base font-semibold font-body">说一段话</span>
+            </button>
           </div>
 
           {/* 关闭提示 */}
