@@ -20,11 +20,12 @@ const App = () => (
       <Sonner 
         position="top-center"
         toastOptions={{
-          className: "glass-card",
+          className: "glass-panel",
           style: {
-            background: "hsl(var(--glass-bg))",
-            backdropFilter: "blur(12px)",
+            background: "hsl(var(--glass-bg-solid))",
+            backdropFilter: "blur(24px)",
             border: "1px solid hsl(var(--glass-border))",
+            borderRadius: "1.5rem",
           },
         }}
       />
