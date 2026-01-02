@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { 
   ArrowLeft, Wallet, Coins, Image, Settings, Share2, 
   Copy, ExternalLink, Play, Heart, MoreHorizontal,
   Pencil, Trash2, X, Camera, LogOut, MessageCircle, Bookmark,
-  ChevronRight
+  ChevronRight, UserPlus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { mockUsers, mockAudios } from "@/data/mockAudios";
 
 // Mock NFT 数据
 const mockNFTs = [
@@ -76,12 +77,24 @@ const balances = [
   { id: "sepolia", name: "SepoliaETH", amount: 1.25, icon: "🔷" },
 ];
 
+// 当前用户 ID (模拟登录用户)
+const CURRENT_USER_ID = "myprofile";
+
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const { userId } = useParams<{ userId: string }>();
+  
+  // 判断是否是查看自己的主页
+  const isOwnProfile = !userId || userId === CURRENT_USER_ID;
+  
+  // 获取用户数据
+  const otherUser = userId ? mockUsers[userId] : null;
+  
   const [activeTab, setActiveTab] = useState<"nfts" | "collected">("nfts");
   const [nfts, setNfts] = useState(mockNFTs);
+  const [isFollowing, setIsFollowing] = useState(false);
   
-  // 编辑状态
+  // 编辑状态 (仅自己主页可用)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [nickname, setNickname] = useState("温柔的声音");
   const [bio, setBio] = useState("用声音记录生活，用温暖治愈彼此");
@@ -89,14 +102,24 @@ const ProfilePage = () => {
   const [editBio, setEditBio] = useState(bio);
   const [avatarSeed, setAvatarSeed] = useState("myprofile");
 
-  // Mock 数据
-  const walletAddress = "0x7F4e8B2c9D1a3E5f6A8b0C2d4E6f8A1b3C5d7E9F";
-  const totalComments = 156;
-  const totalLikes = 892;
-  const totalCollects = 234;
+  // 数据 - 自己或其他用户
+  const displayNickname = isOwnProfile ? nickname : (otherUser?.nickname || "未知用户");
+  const displayBio = isOwnProfile ? bio : (otherUser?.bio || "这个人很神秘...");
+  const displayAvatarSeed = isOwnProfile ? avatarSeed : (otherUser?.avatarSeed || "unknown");
+  const displayWalletAddress = isOwnProfile 
+    ? "0x7F4e8B2c9D1a3E5f6A8b0C2d4E6f8A1b3C5d7E9F" 
+    : (otherUser?.walletAddress || "0x0000...0000");
+  const totalComments = isOwnProfile ? 156 : (otherUser?.totalComments || 0);
+  const totalLikes = isOwnProfile ? 892 : (otherUser?.totalLikes || 0);
+  const totalCollects = isOwnProfile ? 234 : (otherUser?.totalCollects || 0);
+
+  // 获取该用户的作品
+  const userWorks = userId 
+    ? mockAudios.filter(audio => audio.authorId === userId)
+    : [];
 
   const handleCopyAddress = () => {
-    navigator.clipboard.writeText(walletAddress);
+    navigator.clipboard.writeText(displayWalletAddress);
     toast.success("钱包地址已复制", {
       description: "可以分享给姐妹们啦 ✨",
     });
@@ -106,6 +129,15 @@ const ProfilePage = () => {
     toast.success("分享链接已复制", {
       description: "邀请更多姐妹加入社区",
     });
+  };
+
+  const handleFollow = () => {
+    setIsFollowing(!isFollowing);
+    if (!isFollowing) {
+      toast.success(`已关注 ${displayNickname}`);
+    } else {
+      toast(`已取消关注 ${displayNickname}`);
+    }
   };
 
   const handleDisconnect = () => {
@@ -128,7 +160,6 @@ const ProfilePage = () => {
   };
 
   const handleChangeAvatar = () => {
-    // 模拟更换头像
     const seeds = ["moon", "star", "flower", "heart", "sun", "cloud", "rainbow"];
     const newSeed = seeds[Math.floor(Math.random() * seeds.length)];
     setAvatarSeed(newSeed);
@@ -149,6 +180,7 @@ const ProfilePage = () => {
   };
 
   const formatAddress = (address: string) => {
+    if (address.includes("...")) return address;
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
@@ -164,21 +196,27 @@ const ProfilePage = () => {
       <header className="relative z-10 glass-card border-b border-border/30">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <button
-            onClick={() => navigate("/home")}
+            onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>返回</span>
           </button>
-          <h1 className="font-display text-lg font-semibold text-foreground">我的主页</h1>
-          <button 
-            onClick={() => setIsEditDialogOpen(true)}
-            className="w-10 h-10 flex items-center justify-center rounded-xl
-                     bg-secondary/50 hover:bg-secondary text-muted-foreground hover:text-foreground
-                     transition-all duration-300"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
+          <h1 className="font-display text-lg font-semibold text-foreground">
+            {isOwnProfile ? "我的主页" : "TA的主页"}
+          </h1>
+          {isOwnProfile ? (
+            <button 
+              onClick={() => setIsEditDialogOpen(true)}
+              className="w-10 h-10 flex items-center justify-center rounded-xl
+                       bg-secondary/50 hover:bg-secondary text-muted-foreground hover:text-foreground
+                       transition-all duration-300"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+          ) : (
+            <div className="w-10" />
+          )}
         </div>
       </header>
 
@@ -190,17 +228,19 @@ const ProfilePage = () => {
           <div className="flex items-start gap-4 mb-6">
             <div className="relative group">
               <img
-                src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${avatarSeed}`}
+                src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${displayAvatarSeed}`}
                 alt="头像"
                 className="w-20 h-20 rounded-2xl ring-4 ring-primary/20"
               />
-              <button
-                onClick={handleChangeAvatar}
-                className="absolute inset-0 rounded-2xl bg-foreground/50 opacity-0 group-hover:opacity-100
-                         flex items-center justify-center transition-opacity duration-300"
-              >
-                <Camera className="w-6 h-6 text-white" />
-              </button>
+              {isOwnProfile && (
+                <button
+                  onClick={handleChangeAvatar}
+                  className="absolute inset-0 rounded-2xl bg-foreground/50 opacity-0 group-hover:opacity-100
+                           flex items-center justify-center transition-opacity duration-300"
+                >
+                  <Camera className="w-6 h-6 text-white" />
+                </button>
+              )}
               <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full 
                             border-2 border-background flex items-center justify-center">
                 <div className="w-2 h-2 bg-white rounded-full" />
@@ -209,33 +249,60 @@ const ProfilePage = () => {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <h2 className="text-xl font-display font-semibold text-foreground">
-                  {nickname}
+                  {displayNickname}
                 </h2>
-                <button
-                  onClick={() => setIsEditDialogOpen(true)}
-                  className="p-1 rounded-lg hover:bg-secondary/50 text-muted-foreground 
-                           hover:text-foreground transition-colors"
-                >
-                  <Pencil className="w-4 h-4" />
-                </button>
+                {isOwnProfile && (
+                  <button
+                    onClick={() => setIsEditDialogOpen(true)}
+                    className="p-1 rounded-lg hover:bg-secondary/50 text-muted-foreground 
+                             hover:text-foreground transition-colors"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                )}
               </div>
               <p className="text-sm text-muted-foreground mb-3">
-                {bio}
+                {displayBio}
               </p>
               <div className="flex items-center gap-2">
-                <Button
-                  onClick={handleShare}
-                  size="sm"
-                  className="h-8 px-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg"
-                >
-                  <Share2 className="w-4 h-4 mr-1" />
-                  分享主页
-                </Button>
+                {isOwnProfile ? (
+                  <Button
+                    onClick={handleShare}
+                    size="sm"
+                    className="h-8 px-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg"
+                  >
+                    <Share2 className="w-4 h-4 mr-1" />
+                    分享主页
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      onClick={handleFollow}
+                      size="sm"
+                      className={`h-8 px-4 rounded-lg ${
+                        isFollowing 
+                          ? "bg-secondary text-foreground hover:bg-secondary/80" 
+                          : "bg-primary hover:bg-primary/90 text-primary-foreground"
+                      }`}
+                    >
+                      <UserPlus className="w-4 h-4 mr-1" />
+                      {isFollowing ? "已关注" : "关注"}
+                    </Button>
+                    <Button
+                      onClick={handleShare}
+                      size="sm"
+                      variant="outline"
+                      className="h-8 px-3 rounded-lg"
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
 
-          {/* 钱包地址 */}
+          {/* 钱包地址 - 仅自己主页显示完整信息 */}
           <div className="glass-card rounded-2xl p-4 mb-4 bg-secondary/30">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -244,7 +311,7 @@ const ProfilePage = () => {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-0.5">钱包地址</p>
-                  <p className="font-mono text-sm text-foreground">{formatAddress(walletAddress)}</p>
+                  <p className="font-mono text-sm text-foreground">{formatAddress(displayWalletAddress)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -263,95 +330,86 @@ const ProfilePage = () => {
                 >
                   <ExternalLink className="w-4 h-4" />
                 </button>
-                <button
-                  onClick={handleDisconnect}
-                  className="w-8 h-8 rounded-lg bg-destructive/10 hover:bg-destructive/20 
-                           flex items-center justify-center text-destructive
-                           transition-all duration-300"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
+                {isOwnProfile && (
+                  <button
+                    onClick={handleDisconnect}
+                    className="w-8 h-8 rounded-lg bg-destructive/10 hover:bg-destructive/20 
+                             flex items-center justify-center text-destructive
+                             transition-all duration-300"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
 
-          {/* 多币种余额 */}
-          <div className="glass-card rounded-2xl p-4 bg-gradient-to-r from-primary/10 to-secondary/10">
-            <p className="text-xs text-muted-foreground mb-3">余额</p>
-            <div className="space-y-3">
-              {balances.map((balance) => (
-                <div key={balance.id} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">{balance.icon}</span>
-                    <span className="text-sm text-muted-foreground">{balance.name}</span>
+          {/* 余额 - 仅自己主页显示 */}
+          {isOwnProfile && (
+            <div className="glass-card rounded-2xl p-4 bg-gradient-to-r from-primary/10 to-secondary/10">
+              <p className="text-xs text-muted-foreground mb-3">余额</p>
+              <div className="space-y-3">
+                {balances.map((balance) => (
+                  <div key={balance.id} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{balance.icon}</span>
+                      <span className="text-sm text-muted-foreground">{balance.name}</span>
+                    </div>
+                    <span className="font-semibold text-foreground">
+                      {balance.amount.toLocaleString()}
+                    </span>
                   </div>
-                  <span className="font-semibold text-foreground">
-                    {balance.amount.toLocaleString()}
-                  </span>
-                </div>
-              ))}
+                ))}
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full mt-4 h-9 rounded-xl border-primary/30 text-foreground hover:bg-primary/10"
+              >
+                <Coins className="w-4 h-4 mr-2" />
+                兑换
+              </Button>
             </div>
-            <Button
-              size="sm"
-              variant="outline"
-              className="w-full mt-4 h-9 rounded-xl border-primary/30 text-foreground hover:bg-primary/10"
-            >
-              <Coins className="w-4 h-4 mr-2" />
-              兑换
-            </Button>
-          </div>
+          )}
         </div>
 
-        {/* 互动数据统计 - 点击跳转通知页 */}
+        {/* 互动数据统计 */}
         <div className="grid grid-cols-3 gap-3 mb-6 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-          <button
-            onClick={() => navigate("/notifications?tab=comments")}
-            className="glass-card rounded-2xl p-4 text-center hover:bg-secondary/30 transition-colors group"
-          >
+          <div className="glass-card rounded-2xl p-4 text-center">
             <div className="flex items-center justify-center gap-1 mb-1">
               <MessageCircle className="w-4 h-4 text-primary" />
               <p className="text-xl font-bold text-foreground">{totalComments}</p>
             </div>
-            <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
-              收到的评论
-            </p>
-          </button>
-          <button
-            onClick={() => navigate("/notifications?tab=likes")}
-            className="glass-card rounded-2xl p-4 text-center hover:bg-secondary/30 transition-colors group"
-          >
+            <p className="text-xs text-muted-foreground">评论</p>
+          </div>
+          <div className="glass-card rounded-2xl p-4 text-center">
             <div className="flex items-center justify-center gap-1 mb-1">
               <Heart className="w-4 h-4 text-primary" />
               <p className="text-xl font-bold text-foreground">{totalLikes}</p>
             </div>
-            <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
-              收到的爱心
-            </p>
-          </button>
-          <button
-            onClick={() => navigate("/notifications?tab=collects")}
-            className="glass-card rounded-2xl p-4 text-center hover:bg-secondary/30 transition-colors group"
-          >
+            <p className="text-xs text-muted-foreground">获赞</p>
+          </div>
+          <div className="glass-card rounded-2xl p-4 text-center">
             <div className="flex items-center justify-center gap-1 mb-1">
               <Bookmark className="w-4 h-4 text-primary" />
               <p className="text-xl font-bold text-foreground">{totalCollects}</p>
             </div>
-            <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
-              被收藏
-            </p>
-          </button>
+            <p className="text-xs text-muted-foreground">收藏</p>
+          </div>
         </div>
 
-        {/* 查看全部通知入口 */}
-        <button
-          onClick={() => navigate("/notifications")}
-          className="w-full glass-card rounded-2xl p-4 mb-6 flex items-center justify-between
-                   hover:bg-secondary/30 transition-colors animate-fade-in-up"
-          style={{ animationDelay: "0.15s" }}
-        >
-          <span className="text-sm text-foreground">查看全部通知</span>
-          <ChevronRight className="w-5 h-5 text-muted-foreground" />
-        </button>
+        {/* 查看全部通知入口 - 仅自己主页显示 */}
+        {isOwnProfile && (
+          <button
+            onClick={() => navigate("/notifications")}
+            className="w-full glass-card rounded-2xl p-4 mb-6 flex items-center justify-between
+                     hover:bg-secondary/30 transition-colors animate-fade-in-up"
+            style={{ animationDelay: "0.15s" }}
+          >
+            <span className="text-sm text-foreground">查看全部通知</span>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+          </button>
+        )}
 
         {/* Tab 切换 */}
         <div className="flex gap-2 mb-6 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
@@ -365,7 +423,7 @@ const ProfilePage = () => {
                       }`}
           >
             <Image className="w-4 h-4" />
-            我的作品
+            {isOwnProfile ? "我的作品" : "TA的作品"}
           </button>
           <button
             onClick={() => setActiveTab("collected")}
@@ -410,25 +468,27 @@ const ProfilePage = () => {
                               text-background text-xs font-mono">
                   #{nft.id.padStart(3, '0')}
                 </div>
-                {/* 更多操作按钮 */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="absolute top-2 left-2 w-8 h-8 rounded-lg bg-foreground/70
-                                     flex items-center justify-center opacity-0 group-hover:opacity-100
-                                     transition-opacity duration-300 hover:bg-foreground/90">
-                      <MoreHorizontal className="w-4 h-4 text-background" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="glass-card">
-                    <DropdownMenuItem
-                      onClick={() => handleDeleteNFT(nft.id, nft.title)}
-                      className="text-destructive focus:text-destructive cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      删除作品
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {/* 更多操作按钮 - 仅自己作品显示删除 */}
+                {isOwnProfile && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="absolute top-2 left-2 w-8 h-8 rounded-lg bg-foreground/70
+                                       flex items-center justify-center opacity-0 group-hover:opacity-100
+                                       transition-opacity duration-300 hover:bg-foreground/90">
+                        <MoreHorizontal className="w-4 h-4 text-background" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="glass-card">
+                      <DropdownMenuItem
+                        onClick={() => handleDeleteNFT(nft.id, nft.title)}
+                        className="text-destructive focus:text-destructive cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        删除作品
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
               {/* NFT 信息 */}
               <div className="p-3">
