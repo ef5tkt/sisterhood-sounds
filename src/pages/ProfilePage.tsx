@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { 
   ArrowLeft, Wallet, Coins, Image, Settings, Share2, 
   Copy, ExternalLink, Play, Heart, MoreHorizontal,
   Pencil, Trash2, X, Camera, LogOut, MessageCircle, Bookmark,
-  ChevronRight, UserPlus
+  ChevronRight, UserPlus, Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { mockUsers, mockAudios } from "@/data/mockAudios";
+import { supabase } from "@/integrations/supabase/client";
 
 // Mock NFT 数据
 const mockNFTs = [
@@ -83,6 +84,7 @@ const CURRENT_USER_ID = "myprofile";
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { userId } = useParams<{ userId: string }>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // 判断是否是查看自己的主页
   const isOwnProfile = !userId || userId === CURRENT_USER_ID;
@@ -100,12 +102,23 @@ const ProfilePage = () => {
   const [bio, setBio] = useState("用声音记录生活，用温暖治愈彼此");
   const [editNickname, setEditNickname] = useState(nickname);
   const [editBio, setEditBio] = useState(bio);
-  const [avatarSeed, setAvatarSeed] = useState("myprofile");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  // 从本地存储加载头像
+  useEffect(() => {
+    const savedAvatar = localStorage.getItem("user_avatar_url");
+    if (savedAvatar) {
+      setAvatarUrl(savedAvatar);
+    }
+  }, []);
 
   // 数据 - 自己或其他用户
   const displayNickname = isOwnProfile ? nickname : (otherUser?.nickname || "未知用户");
   const displayBio = isOwnProfile ? bio : (otherUser?.bio || "这个人很神秘...");
-  const displayAvatarSeed = isOwnProfile ? avatarSeed : (otherUser?.avatarSeed || "unknown");
+  const displayAvatarUrl = isOwnProfile 
+    ? (avatarUrl || `https://api.dicebear.com/7.x/lorelei/svg?seed=myprofile`) 
+    : (otherUser?.avatarSeed ? `https://api.dicebear.com/7.x/lorelei/svg?seed=${otherUser.avatarSeed}` : `https://api.dicebear.com/7.x/lorelei/svg?seed=unknown`);
   const displayWalletAddress = isOwnProfile 
     ? "0x7F4e8B2c9D1a3E5f6A8b0C2d4E6f8A1b3C5d7E9F" 
     : (otherUser?.walletAddress || "0x0000...0000");
@@ -162,11 +175,68 @@ const ProfilePage = () => {
     toast.success("资料已更新 ✨");
   };
 
-  const handleChangeAvatar = () => {
-    const seeds = ["moon", "star", "flower", "heart", "sun", "cloud", "rainbow"];
-    const newSeed = seeds[Math.floor(Math.random() * seeds.length)];
-    setAvatarSeed(newSeed);
-    toast.success("头像已更新");
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // 验证文件类型
+    if (!file.type.startsWith('image/')) {
+      toast.error("请选择图片文件");
+      return;
+    }
+
+    // 验证文件大小 (最大 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("图片大小不能超过 5MB");
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+
+    try {
+      // 生成唯一文件名
+      const fileExt = file.name.split('.').pop();
+      const fileName = `avatar_${Date.now()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      // 上传到 Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('audios')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      // 获取公开 URL
+      const { data: urlData } = supabase.storage
+        .from('audios')
+        .getPublicUrl(filePath);
+
+      const newAvatarUrl = urlData.publicUrl;
+      
+      // 保存到本地存储
+      localStorage.setItem("user_avatar_url", newAvatarUrl);
+      setAvatarUrl(newAvatarUrl);
+      
+      toast.success("头像已更新 ✨");
+    } catch (error: any) {
+      console.error("Avatar upload error:", error);
+      toast.error("头像上传失败，请重试");
+    } finally {
+      setIsUploadingAvatar(false);
+      // 清空 input 以便可以再次选择同一文件
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   const handleDeleteNFT = (id: string, title: string) => {
@@ -230,18 +300,30 @@ const ProfilePage = () => {
           {/* 头像和基本信息 */}
           <div className="flex items-start gap-4 mb-6">
             <div className="relative group">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleAvatarUpload}
+                accept="image/*"
+                className="hidden"
+              />
               <img
-                src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${displayAvatarSeed}`}
+                src={displayAvatarUrl}
                 alt="头像"
-                className="w-20 h-20 rounded-2xl ring-4 ring-primary/20"
+                className="w-20 h-20 rounded-2xl ring-4 ring-primary/20 object-cover"
               />
               {isOwnProfile && (
                 <button
-                  onClick={handleChangeAvatar}
+                  onClick={handleAvatarClick}
+                  disabled={isUploadingAvatar}
                   className="absolute inset-0 rounded-2xl bg-foreground/50 opacity-0 group-hover:opacity-100
-                           flex items-center justify-center transition-opacity duration-300"
+                           flex items-center justify-center transition-opacity duration-300 disabled:cursor-not-allowed"
                 >
-                  <Camera className="w-6 h-6 text-white" />
+                  {isUploadingAvatar ? (
+                    <Loader2 className="w-6 h-6 text-white animate-spin" />
+                  ) : (
+                    <Camera className="w-6 h-6 text-white" />
+                  )}
                 </button>
               )}
               <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full 
@@ -528,16 +610,21 @@ const ProfilePage = () => {
             <div className="flex justify-center">
               <div className="relative group">
                 <img
-                  src={`https://api.dicebear.com/7.x/lorelei/svg?seed=${avatarSeed}`}
+                  src={avatarUrl || `https://api.dicebear.com/7.x/lorelei/svg?seed=myprofile`}
                   alt="头像"
-                  className="w-24 h-24 rounded-2xl ring-4 ring-primary/20"
+                  className="w-24 h-24 rounded-2xl ring-4 ring-primary/20 object-cover"
                 />
                 <button
-                  onClick={handleChangeAvatar}
+                  onClick={handleAvatarClick}
+                  disabled={isUploadingAvatar}
                   className="absolute inset-0 rounded-2xl bg-foreground/50 opacity-0 group-hover:opacity-100
-                           flex items-center justify-center transition-opacity duration-300"
+                           flex items-center justify-center transition-opacity duration-300 disabled:cursor-not-allowed"
                 >
-                  <Camera className="w-6 h-6 text-white" />
+                  {isUploadingAvatar ? (
+                    <Loader2 className="w-6 h-6 text-white animate-spin" />
+                  ) : (
+                    <Camera className="w-6 h-6 text-white" />
+                  )}
                 </button>
               </div>
             </div>
