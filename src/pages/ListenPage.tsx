@@ -22,7 +22,7 @@ const ListenPage = () => {
   const navigate = useNavigate();
   const { data: audios, isLoading } = useAudios();
   const [currentAudio, setCurrentAudio] = useState<AudioItem | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [showTagMenu, setShowTagMenu] = useState(false);
@@ -37,6 +37,68 @@ const ListenPage = () => {
   const touchEndY = useRef<number>(0);
   const isDragging = useRef<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // 音频播放器 ref
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // 初始化音频播放器
+  useEffect(() => {
+    audioRef.current = new Audio();
+    audioRef.current.loop = true;
+    
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleError = (e: Event) => {
+      console.error("Audio error:", e);
+      setIsPlaying(false);
+    };
+    
+    audioRef.current.addEventListener('play', handlePlay);
+    audioRef.current.addEventListener('pause', handlePause);
+    audioRef.current.addEventListener('error', handleError);
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.removeEventListener('play', handlePlay);
+        audioRef.current.removeEventListener('pause', handlePause);
+        audioRef.current.removeEventListener('error', handleError);
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  // 当 currentAudio 变化时，加载并播放新音频
+  useEffect(() => {
+    if (currentAudio?.audioUrl && audioRef.current) {
+      audioRef.current.src = currentAudio.audioUrl;
+      audioRef.current.load();
+      audioRef.current.play().catch((err) => {
+        console.log("Autoplay blocked:", err);
+        setIsPlaying(false);
+      });
+    } else if (audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+  }, [currentAudio]);
+
+  // 切换播放/暂停
+  const togglePlayPause = useCallback(() => {
+    if (!audioRef.current || !currentAudio?.audioUrl) {
+      toast.error("该音频暂无播放源");
+      return;
+    }
+    
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play().catch((err) => {
+        console.error("Play error:", err);
+        toast.error("播放失败");
+      });
+    }
+  }, [isPlaying, currentAudio]);
 
   // 根据标签获取随机音频
   const getRandomAudio = useCallback((tag?: string) => {
@@ -70,7 +132,9 @@ const ListenPage = () => {
   // 切换音频（带淡入淡出）
   const switchAudio = useCallback((tag?: string) => {
     setIsTransitioning(true);
-    setIsPlaying(false);
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
     
     setTimeout(() => {
       const newAudio = getRandomAudio(tag);
@@ -80,7 +144,6 @@ const ListenPage = () => {
       
       setTimeout(() => {
         setIsTransitioning(false);
-        setIsPlaying(true);
       }, 100);
     }, 400);
   }, [getRandomAudio]);
@@ -289,9 +352,22 @@ const ListenPage = () => {
           />
         </div>
 
-        {/* 音频可视化器 */}
-        <div className="mb-8">
+        {/* 音频可视化器 - 点击播放/暂停 */}
+        <div className="mb-8 cursor-pointer" onClick={(e) => {
+          e.stopPropagation();
+          togglePlayPause();
+        }}>
           <AudioVisualizer isPlaying={isPlaying} />
+          {!isPlaying && currentAudio?.audioUrl && (
+            <div className="text-center mt-2 text-sm text-muted-foreground/70">
+              点击播放
+            </div>
+          )}
+          {!currentAudio?.audioUrl && (
+            <div className="text-center mt-2 text-sm text-muted-foreground/50">
+              暂无音频
+            </div>
+          )}
         </div>
 
         {/* 作者和标题 */}
