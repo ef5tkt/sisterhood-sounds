@@ -23,6 +23,7 @@ const ListenPage = () => {
   const { data: audios, isLoading } = useAudios();
   const [currentAudio, setCurrentAudio] = useState<AudioItem | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [showTagMenu, setShowTagMenu] = useState(false);
@@ -45,17 +46,26 @@ const ListenPage = () => {
   useEffect(() => {
     audioRef.current = new Audio();
     audioRef.current.loop = true;
+    audioRef.current.preload = "auto";
     
-    const handlePlay = () => setIsPlaying(true);
+    const handlePlay = () => {
+      setIsPlaying(true);
+      setIsAudioLoading(false);
+    };
     const handlePause = () => setIsPlaying(false);
     const handleError = (e: Event) => {
       console.error("Audio error:", e);
       setIsPlaying(false);
+      setIsAudioLoading(false);
     };
+    const handleLoadStart = () => setIsAudioLoading(true);
+    const handleCanPlay = () => setIsAudioLoading(false);
     
     audioRef.current.addEventListener('play', handlePlay);
     audioRef.current.addEventListener('pause', handlePause);
     audioRef.current.addEventListener('error', handleError);
+    audioRef.current.addEventListener('loadstart', handleLoadStart);
+    audioRef.current.addEventListener('canplay', handleCanPlay);
     
     return () => {
       if (audioRef.current) {
@@ -63,6 +73,8 @@ const ListenPage = () => {
         audioRef.current.removeEventListener('play', handlePlay);
         audioRef.current.removeEventListener('pause', handlePause);
         audioRef.current.removeEventListener('error', handleError);
+        audioRef.current.removeEventListener('loadstart', handleLoadStart);
+        audioRef.current.removeEventListener('canplay', handleCanPlay);
         audioRef.current = null;
       }
     };
@@ -358,7 +370,13 @@ const ListenPage = () => {
           togglePlayPause();
         }}>
           <AudioVisualizer isPlaying={isPlaying} />
-          {!isPlaying && currentAudio?.audioUrl && (
+          {isAudioLoading && currentAudio?.audioUrl && (
+            <div className="text-center mt-2 text-sm text-muted-foreground/70 flex items-center justify-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              加载中...
+            </div>
+          )}
+          {!isAudioLoading && !isPlaying && currentAudio?.audioUrl && (
             <div className="text-center mt-2 text-sm text-muted-foreground/70">
               点击播放
             </div>
