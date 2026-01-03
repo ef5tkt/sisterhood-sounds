@@ -117,8 +117,8 @@ const ProfilePage = () => {
   const displayNickname = isOwnProfile ? nickname : (otherUser?.nickname || "未知用户");
   const displayBio = isOwnProfile ? bio : (otherUser?.bio || "这个人很神秘...");
   const displayAvatarUrl = isOwnProfile 
-    ? (avatarUrl || `https://api.dicebear.com/7.x/adventurer/svg?seed=myprofile&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear`) 
-    : (otherUser?.avatarSeed ? `https://api.dicebear.com/7.x/adventurer/svg?seed=${otherUser.avatarSeed}&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear` : `https://api.dicebear.com/7.x/adventurer/svg?seed=unknown&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear`);
+    ? (avatarUrl || `https://api.dicebear.com/7.x/notionists/svg?seed=myprofile&backgroundColor=fff0f5,f0f4ff,f5fff0&backgroundType=gradientLinear`) 
+    : (otherUser?.avatarSeed ? `https://api.dicebear.com/7.x/notionists/svg?seed=${otherUser.avatarSeed}&backgroundColor=fff0f5,f0f4ff,f5fff0&backgroundType=gradientLinear` : `https://api.dicebear.com/7.x/notionists/svg?seed=unknown&backgroundColor=fff0f5,f0f4ff,f5fff0&backgroundType=gradientLinear`);
   const displayWalletAddress = isOwnProfile 
     ? "0x7F4e8B2c9D1a3E5f6A8b0C2d4E6f8A1b3C5d7E9F" 
     : (otherUser?.walletAddress || "0x0000...0000");
@@ -610,7 +610,7 @@ const ProfilePage = () => {
             <div className="flex justify-center">
               <div className="relative group">
                 <img
-                  src={avatarUrl || `https://api.dicebear.com/7.x/adventurer/svg?seed=myprofile&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear`}
+                  src={avatarUrl || `https://api.dicebear.com/7.x/notionists/svg?seed=myprofile&backgroundColor=fff0f5,f0f4ff,f5fff0&backgroundType=gradientLinear`}
                   alt="头像"
                   className="w-24 h-24 rounded-2xl ring-4 ring-primary/20 object-cover"
                 />
