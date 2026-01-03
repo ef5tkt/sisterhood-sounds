@@ -239,8 +239,13 @@ const ListenPage = () => {
     setSwipeOffset(0);
   }, [swipeOffset, switchAudio, currentTag]);
 
-  // 鼠标长按处理（桌面端）
-  const handleMouseDown = useCallback(() => {
+  // 鼠标拖拽和长按处理（桌面端）
+  const mouseStartY = useRef<number>(0);
+  const isMouseDragging = useRef<boolean>(false);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    mouseStartY.current = e.clientY;
+    isMouseDragging.current = true;
     isLongPress.current = false;
     
     longPressTimer.current = setTimeout(() => {
@@ -249,17 +254,52 @@ const ListenPage = () => {
     }, 500);
   }, []);
 
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isMouseDragging.current) return;
+    
+    const diff = mouseStartY.current - e.clientY;
+    
+    // 如果移动了，取消长按
+    if (Math.abs(diff) > 10 && longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+    
+    // 只允许上滑（正值），限制最大偏移
+    if (diff > 0) {
+      setSwipeOffset(Math.min(diff * 0.5, 150));
+    } else {
+      setSwipeOffset(Math.max(diff * 0.3, -50));
+    }
+  }, []);
+
   const handleMouseUp = useCallback(() => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
     }
-  }, []);
+    
+    if (!isMouseDragging.current) return;
+    isMouseDragging.current = false;
+    
+    // 如果上滑超过阈值，切换到下一个音频
+    if (swipeOffset > 80) {
+      switchAudio(currentTag);
+    }
+    
+    // 重置偏移
+    setSwipeOffset(0);
+  }, [swipeOffset, switchAudio, currentTag]);
 
   const handleMouseLeave = useCallback(() => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
+    }
+    
+    if (isMouseDragging.current) {
+      isMouseDragging.current = false;
+      setSwipeOffset(0);
     }
   }, []);
 
@@ -417,10 +457,11 @@ const ListenPage = () => {
         )}
         style={{
           transform: `translateY(${-swipeOffset}px)`,
-          transition: isDragging.current ? 'none' : 'transform 0.3s ease-out, opacity 0.5s, scale 0.5s'
+          transition: (isDragging.current || isMouseDragging.current) ? 'none' : 'transform 0.3s ease-out, opacity 0.5s, scale 0.5s'
         }}
         onClick={handleScreenClick}
         onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
       >
