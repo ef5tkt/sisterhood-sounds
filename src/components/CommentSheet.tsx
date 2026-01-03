@@ -1,15 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Heart, MessageCircle, Send, Loader2, User } from 'lucide-react';
-import { useComments, Comment } from '@/hooks/useComments';
-import { useAuth } from '@/hooks/useAuth';
+import { isUserVerified } from '@/components/WalletGateModal';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+
+interface CommentData {
+  id: string;
+  audioId: string;
+  nickname: string;
+  avatarUrl?: string;
+  content: string;
+  likes: number;
+  isLiked: boolean;
+  createdAt: Date;
+  replies?: CommentData[];
+}
 
 interface CommentSheetProps {
   isOpen: boolean;
@@ -18,21 +29,81 @@ interface CommentSheetProps {
   onLoginRequired: () => void;
 }
 
+// 本地存储评论
+const COMMENTS_KEY = 'audio_comments';
+
+const getStoredComments = (): CommentData[] => {
+  try {
+    const stored = localStorage.getItem(COMMENTS_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return parsed.map((c: any) => ({
+        ...c,
+        createdAt: new Date(c.createdAt),
+        replies: c.replies?.map((r: any) => ({
+          ...r,
+          createdAt: new Date(r.createdAt),
+        })),
+      }));
+    }
+  } catch (e) {
+    console.error('Failed to parse comments', e);
+  }
+  return [];
+};
+
+const saveComments = (comments: CommentData[]) => {
+  localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
+};
+
+// 模拟初始评论
+const mockComments: CommentData[] = [
+  {
+    id: '1',
+    audioId: 'mock',
+    nickname: '小红',
+    content: '这段话太治愈了，每次听都会泪目 💕',
+    likes: 128,
+    isLiked: false,
+    createdAt: new Date(Date.now() - 3600000 * 2),
+    replies: [
+      {
+        id: '1-1',
+        audioId: 'mock',
+        nickname: '阿月',
+        content: '同感！已经循环听了好多遍',
+        likes: 23,
+        isLiked: false,
+        createdAt: new Date(Date.now() - 3600000),
+      },
+    ],
+  },
+  {
+    id: '2',
+    audioId: 'mock',
+    nickname: '晓晓',
+    content: '女性力量！我们一起加油 ✨',
+    likes: 89,
+    isLiked: false,
+    createdAt: new Date(Date.now() - 86400000),
+  },
+];
+
 function CommentItem({ 
   comment, 
   onReply, 
   onLike, 
-  isLoggedIn,
+  isVerified,
   onLoginRequired,
 }: { 
-  comment: Comment; 
+  comment: CommentData; 
   onReply: (commentId: string, nickname: string) => void;
   onLike: (commentId: string) => void;
-  isLoggedIn: boolean;
+  isVerified: boolean;
   onLoginRequired: () => void;
 }) {
   const handleLike = () => {
-    if (!isLoggedIn) {
+    if (!isVerified) {
       onLoginRequired();
       return;
     }
@@ -40,18 +111,18 @@ function CommentItem({
   };
 
   const handleReply = () => {
-    if (!isLoggedIn) {
+    if (!isVerified) {
       onLoginRequired();
       return;
     }
-    onReply(comment.id, comment.profile?.nickname || '匿名用户');
+    onReply(comment.id, comment.nickname);
   };
 
   return (
     <div className="py-3">
       <div className="flex gap-3">
         <Avatar className="w-8 h-8 flex-shrink-0">
-          <AvatarImage src={comment.profile?.avatar_url || ''} />
+          <AvatarImage src={comment.avatarUrl || ''} />
           <AvatarFallback className="bg-muted">
             <User className="w-4 h-4 text-muted-foreground" />
           </AvatarFallback>
@@ -59,10 +130,10 @@ function CommentItem({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm font-medium text-foreground truncate">
-              {comment.profile?.nickname || '匿名用户'}
+              {comment.nickname}
             </span>
             <span className="text-xs text-muted-foreground flex-shrink-0">
-              {formatDistanceToNow(new Date(comment.created_at), { 
+              {formatDistanceToNow(comment.createdAt, { 
                 addSuffix: true, 
                 locale: zhCN 
               })}
@@ -99,7 +170,7 @@ function CommentItem({
           {comment.replies.map(reply => (
             <div key={reply.id} className="flex gap-2">
               <Avatar className="w-6 h-6 flex-shrink-0">
-                <AvatarImage src={reply.profile?.avatar_url || ''} />
+                <AvatarImage src={reply.avatarUrl || ''} />
                 <AvatarFallback className="bg-muted text-xs">
                   <User className="w-3 h-3 text-muted-foreground" />
                 </AvatarFallback>
@@ -107,10 +178,10 @@ function CommentItem({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-xs font-medium text-foreground truncate">
-                    {reply.profile?.nickname || '匿名用户'}
+                    {reply.nickname}
                   </span>
                   <span className="text-xs text-muted-foreground flex-shrink-0">
-                    {formatDistanceToNow(new Date(reply.created_at), { 
+                    {formatDistanceToNow(reply.createdAt, { 
                       addSuffix: true, 
                       locale: zhCN 
                     })}
@@ -120,7 +191,7 @@ function CommentItem({
                 <div className="flex items-center gap-3 mt-1">
                   <button 
                     onClick={() => {
-                      if (!isLoggedIn) {
+                      if (!isVerified) {
                         onLoginRequired();
                         return;
                       }
@@ -147,14 +218,37 @@ function CommentItem({
 }
 
 export default function CommentSheet({ isOpen, onClose, audioId, onLoginRequired }: CommentSheetProps) {
-  const { comments, loading, addComment, toggleLike } = useComments(audioId);
-  const { user } = useAuth();
+  const [comments, setComments] = useState<CommentData[]>([]);
+  const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
   const [replyTo, setReplyTo] = useState<{ id: string; nickname: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  
+  const isVerified = isUserVerified();
+
+  // 加载评论
+  useEffect(() => {
+    if (isOpen) {
+      setLoading(true);
+      // 模拟加载延迟
+      setTimeout(() => {
+        const stored = getStoredComments();
+        const audioComments = stored.filter(c => c.audioId === audioId);
+        
+        // 如果没有评论，添加一些模拟评论
+        if (audioComments.length === 0) {
+          const initialComments = mockComments.map(c => ({ ...c, audioId }));
+          setComments(initialComments);
+        } else {
+          setComments(audioComments);
+        }
+        setLoading(false);
+      }, 300);
+    }
+  }, [isOpen, audioId]);
 
   const handleSubmit = async () => {
-    if (!user) {
+    if (!isVerified) {
       onLoginRequired();
       return;
     }
@@ -166,32 +260,87 @@ export default function CommentSheet({ isOpen, onClose, audioId, onLoginRequired
     }
 
     setSubmitting(true);
-    const { error } = await addComment(content, replyTo?.id);
-    setSubmitting(false);
+    
+    // 模拟提交延迟
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    if (error) {
-      toast.error('发送失败，请重试');
+    const newCommentData: CommentData = {
+      id: Date.now().toString(),
+      audioId,
+      nickname: '我',
+      content,
+      likes: 0,
+      isLiked: false,
+      createdAt: new Date(),
+    };
+
+    let updatedComments: CommentData[];
+    
+    if (replyTo) {
+      // 作为回复添加
+      updatedComments = comments.map(c => {
+        if (c.id === replyTo.id) {
+          return {
+            ...c,
+            replies: [...(c.replies || []), { ...newCommentData, id: `${c.id}-${Date.now()}` }],
+          };
+        }
+        return c;
+      });
     } else {
-      setNewComment('');
-      setReplyTo(null);
-      toast.success('评论成功');
+      // 作为新评论添加
+      updatedComments = [newCommentData, ...comments];
     }
+
+    setComments(updatedComments);
+    
+    // 保存到本地存储
+    const allComments = getStoredComments().filter(c => c.audioId !== audioId);
+    saveComments([...allComments, ...updatedComments]);
+
+    setNewComment('');
+    setReplyTo(null);
+    setSubmitting(false);
+    toast.success('评论成功');
   };
 
   const handleReply = (commentId: string, nickname: string) => {
     setReplyTo({ id: commentId, nickname });
   };
 
-  const handleLike = async (commentId: string) => {
-    const { error } = await toggleLike(commentId);
-    if (error) {
-      toast.error(error.message);
-    }
+  const handleLike = (commentId: string) => {
+    const updateLike = (items: CommentData[]): CommentData[] => {
+      return items.map(c => {
+        if (c.id === commentId) {
+          return {
+            ...c,
+            isLiked: !c.isLiked,
+            likes: c.isLiked ? c.likes - 1 : c.likes + 1,
+          };
+        }
+        if (c.replies) {
+          return {
+            ...c,
+            replies: updateLike(c.replies),
+          };
+        }
+        return c;
+      });
+    };
+
+    const updated = updateLike(comments);
+    setComments(updated);
+    
+    // 保存到本地存储
+    const allComments = getStoredComments().filter(c => c.audioId !== audioId);
+    saveComments([...allComments, ...updated]);
   };
 
   const cancelReply = () => {
     setReplyTo(null);
   };
+
+  const totalComments = comments.reduce((acc, c) => acc + 1 + (c.replies?.length || 0), 0);
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -199,7 +348,7 @@ export default function CommentSheet({ isOpen, onClose, audioId, onLoginRequired
         <div className="flex flex-col h-full">
           <SheetHeader className="px-4 pt-4 pb-2 border-b">
             <SheetTitle className="text-center text-base">
-              {comments.length} 条评论
+              {totalComments} 条评论
             </SheetTitle>
           </SheetHeader>
 
@@ -222,7 +371,7 @@ export default function CommentSheet({ isOpen, onClose, audioId, onLoginRequired
                     comment={comment}
                     onReply={handleReply}
                     onLike={handleLike}
-                    isLoggedIn={!!user}
+                    isVerified={isVerified}
                     onLoginRequired={onLoginRequired}
                   />
                 ))}
@@ -249,15 +398,15 @@ export default function CommentSheet({ isOpen, onClose, audioId, onLoginRequired
               <Textarea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                placeholder={user ? "说点什么..." : "登录后发表评论"}
+                placeholder={isVerified ? "说点什么..." : "连接钱包后发表评论"}
                 className="min-h-[40px] max-h-[100px] resize-none rounded-2xl bg-muted/50 border-0 focus-visible:ring-1"
                 rows={1}
-                disabled={!user}
+                disabled={!isVerified}
               />
               <Button
                 size="icon"
                 onClick={handleSubmit}
-                disabled={submitting || !newComment.trim() || !user}
+                disabled={submitting || !newComment.trim() || !isVerified}
                 className="rounded-full h-10 w-10 flex-shrink-0"
               >
                 {submitting ? (
@@ -267,12 +416,12 @@ export default function CommentSheet({ isOpen, onClose, audioId, onLoginRequired
                 )}
               </Button>
             </div>
-            {!user && (
+            {!isVerified && (
               <button 
                 onClick={onLoginRequired}
                 className="w-full text-center text-xs text-primary mt-2 hover:underline"
               >
-                点击登录
+                点击连接钱包
               </button>
             )}
           </div>

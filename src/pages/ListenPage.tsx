@@ -400,15 +400,14 @@ const ListenPage = () => {
     }
   };
 
-  // 评论处理 - 打开评论面板
+  // 评论处理 - 打开评论面板（需要验证钱包）
   const handleComment = () => {
-    console.log("Opening comment sheet");
+    if (!isUserVerified()) {
+      setPendingAction("comment");
+      setShowWalletModal(true);
+      return;
+    }
     setShowCommentSheet(true);
-  };
-
-  // 需要登录时跳转到登录页
-  const handleLoginRequired = () => {
-    navigate('/auth');
   };
 
   // 分享处理 - 所有人都可以
@@ -422,9 +421,15 @@ const ListenPage = () => {
       setIsSaved(true);
       toast.success("已收藏到你的珍藏 ⭐");
     } else if (pendingAction === "comment") {
-      toast("评论功能即将开放 💬");
+      setShowCommentSheet(true);
     }
     setPendingAction(null);
+  };
+
+  // 评论面板中需要验证时
+  const handleCommentLoginRequired = () => {
+    setShowCommentSheet(false);
+    setShowWalletModal(true);
   };
 
   // 点击头像跳转到发布者主页
@@ -656,7 +661,7 @@ const ListenPage = () => {
           isOpen={showCommentSheet}
           onClose={() => setShowCommentSheet(false)}
           audioId={currentAudio.id}
-          onLoginRequired={handleLoginRequired}
+          onLoginRequired={handleCommentLoginRequired}
         />
       )}
 
