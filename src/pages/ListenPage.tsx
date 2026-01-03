@@ -98,10 +98,22 @@ const ListenPage = () => {
     if (currentAudio?.audioUrl && audioRef.current) {
       audioRef.current.src = currentAudio.audioUrl;
       audioRef.current.load();
-      audioRef.current.play().catch((err) => {
-        console.log("Autoplay blocked:", err);
-        setIsPlaying(false);
-      });
+      
+      // 监听 canplay 事件后自动播放
+      const handleCanPlayThrough = () => {
+        if (audioRef.current) {
+          audioRef.current.play().catch((err) => {
+            console.log("Autoplay blocked:", err);
+            setIsPlaying(false);
+          });
+        }
+      };
+      
+      audioRef.current.addEventListener('canplaythrough', handleCanPlayThrough, { once: true });
+      
+      return () => {
+        audioRef.current?.removeEventListener('canplaythrough', handleCanPlayThrough);
+      };
     } else if (audioRef.current) {
       audioRef.current.pause();
       setIsPlaying(false);
