@@ -41,6 +41,10 @@ const ListenPage = () => {
   
   // 音频播放器 ref
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  // 长按检测
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const isLongPress = useRef<boolean>(false);
 
   // 初始化音频播放器
   useEffect(() => {
@@ -172,6 +176,16 @@ const ListenPage = () => {
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
     isDragging.current = true;
+    isLongPress.current = false;
+    
+    // 开始长按计时
+    longPressTimer.current = setTimeout(() => {
+      isLongPress.current = true;
+      setShowTagMenu(true);
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+    }, 500);
   }, []);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
@@ -179,6 +193,12 @@ const ListenPage = () => {
     
     const currentY = e.touches[0].clientY;
     const diff = touchStartY.current - currentY;
+    
+    // 如果移动了，取消长按
+    if (Math.abs(diff) > 10 && longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
     
     // 只允许上滑（正值），限制最大偏移
     if (diff > 0) {
@@ -189,6 +209,12 @@ const ListenPage = () => {
   }, []);
 
   const handleTouchEnd = useCallback(() => {
+    // 清除长按计时器
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+    
     if (!isDragging.current) return;
     isDragging.current = false;
     
@@ -203,6 +229,16 @@ const ListenPage = () => {
     // 重置偏移
     setSwipeOffset(0);
   }, [swipeOffset, switchAudio, currentTag]);
+
+  // 点击处理 - 暂停/播放
+  const handleScreenClick = useCallback(() => {
+    // 如果是长按触发的，不处理点击
+    if (isLongPress.current) {
+      isLongPress.current = false;
+      return;
+    }
+    togglePlayPause();
+  }, [togglePlayPause]);
 
   // 处理标签选择
   const handleTagSelect = (tag: string) => {
@@ -340,17 +376,17 @@ const ListenPage = () => {
         </div>
       </div>
 
-      {/* 主内容区域 - 点击屏幕唤起标签菜单，支持滑动 */}
+      {/* 主内容区域 - 点击暂停/播放，长按唤起标签菜单，支持滑动 */}
       <div 
         className={cn(
-          "relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-20 pb-32 transition-all duration-300",
+          "relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-20 pb-32 transition-all duration-300 select-none",
           isTransitioning ? "opacity-0 scale-95" : "opacity-100 scale-100"
         )}
         style={{
           transform: `translateY(${-swipeOffset}px)`,
           transition: isDragging.current ? 'none' : 'transform 0.3s ease-out, opacity 0.5s, scale 0.5s'
         }}
-        onClick={() => !isDragging.current && setShowTagMenu(true)}
+        onClick={handleScreenClick}
       >
         {/* NFT 风格头像 - 点击跳转个人主页 */}
         <div 
@@ -364,11 +400,8 @@ const ListenPage = () => {
           />
         </div>
 
-        {/* 音频可视化器 - 点击播放/暂停 */}
-        <div className="mb-8 cursor-pointer" onClick={(e) => {
-          e.stopPropagation();
-          togglePlayPause();
-        }}>
+        {/* 音频可视化器 */}
+        <div className="mb-8">
           <AudioVisualizer isPlaying={isPlaying} />
           {isAudioLoading && currentAudio?.audioUrl && (
             <div className="text-center mt-2 text-sm text-muted-foreground/70 flex items-center justify-center gap-2">
@@ -378,7 +411,7 @@ const ListenPage = () => {
           )}
           {!isAudioLoading && !isPlaying && currentAudio?.audioUrl && (
             <div className="text-center mt-2 text-sm text-muted-foreground/70">
-              点击播放
+              点击屏幕播放
             </div>
           )}
           {!currentAudio?.audioUrl && (
