@@ -33,8 +33,8 @@ const NFTAvatar = ({
   onClick,
   glowing = false
 }: NFTAvatarProps) => {
-  // 使用 seed 生成 dicebear 头像 URL
-  const avatarSrc = src || `https://api.dicebear.com/7.x/lorelei/svg?seed=${seed || "default"}`;
+  // 使用 seed 生成 dicebear 头像 URL - adventurer 风格更可爱
+  const avatarSrc = src || `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed || "default"}&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear`;
   
   return (
     <div 

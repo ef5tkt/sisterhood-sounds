@@ -72,7 +72,7 @@ const Navbar = () => {
                        hover:scale-105 transition-all duration-300"
           >
             <img
-              src="https://api.dicebear.com/7.x/lorelei/svg?seed=user"
+              src="https://api.dicebear.com/7.x/adventurer/svg?seed=user&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear"
               alt="用户头像"
               className="w-full h-full object-cover"
             />

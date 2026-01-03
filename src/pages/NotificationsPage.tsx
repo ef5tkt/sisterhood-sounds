@@ -11,7 +11,7 @@ const mockNotifications = {
     {
       id: "c1",
       user: "月光姐姐",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=moon",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=moon&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "评论了你的作品",
       target: "晚安冥想 #001",
       content: "太治愈了，听着听着就睡着了 💤",
@@ -20,7 +20,7 @@ const mockNotifications = {
     {
       id: "c2",
       user: "诗意人生",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=poetry",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=poetry&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "评论了你的作品",
       target: "海子的诗",
       content: "声音好温柔，朗诵得真好",
@@ -29,7 +29,7 @@ const mockNotifications = {
     {
       id: "c3",
       user: "咖啡与书",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=coffee",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=coffee&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "评论了你的作品",
       target: "雨天的咖啡馆",
       content: "故事好有画面感！",
@@ -38,7 +38,7 @@ const mockNotifications = {
     {
       id: "c4",
       user: "瑜伽小姐姐",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=yoga",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=yoga&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "回复了你的评论",
       target: "清晨唤醒冥想",
       content: "谢谢姐妹的支持 ❤️",
@@ -49,7 +49,7 @@ const mockNotifications = {
     {
       id: "l1",
       user: "温柔说书人",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=book",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=book&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "赞了你的作品",
       target: "写给18岁的自己",
       time: "刚刚",
@@ -57,7 +57,7 @@ const mockNotifications = {
     {
       id: "l2",
       user: "职场姐姐",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=career",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=career&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "赞了你的作品",
       target: "晚安冥想 #001",
       time: "5分钟前",
@@ -65,7 +65,7 @@ const mockNotifications = {
     {
       id: "l3",
       user: "暖心妈妈",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=mama",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=mama&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "赞了你的作品",
       target: "林徽因 · 四月天",
       time: "20分钟前",
@@ -73,7 +73,7 @@ const mockNotifications = {
     {
       id: "l4",
       user: "古典之声",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=classic",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=classic&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "赞了你的作品",
       target: "海子的诗",
       time: "1小时前",
@@ -81,7 +81,7 @@ const mockNotifications = {
     {
       id: "l5",
       user: "星空女孩",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=star",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=star&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "赞了你的作品",
       target: "清晨唤醒冥想",
       time: "2小时前",
@@ -91,7 +91,7 @@ const mockNotifications = {
     {
       id: "s1",
       user: "梦想家",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=dream",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=dream&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "收藏了你的作品",
       target: "晚安冥想 #001",
       time: "10分钟前",
@@ -99,7 +99,7 @@ const mockNotifications = {
     {
       id: "s2",
       user: "夜猫子",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=night",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=night&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "收藏了你的作品",
       target: "写给18岁的自己",
       time: "30分钟前",
@@ -107,7 +107,7 @@ const mockNotifications = {
     {
       id: "s3",
       user: "文艺青年",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=art",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=art&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       action: "收藏了你的作品",
       target: "海子的诗",
       time: "2小时前",

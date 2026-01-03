@@ -70,7 +70,7 @@ const mockRelayVoices = [
   {
     id: "v1",
     user: "月光姐姐",
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=moon",
+    avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=moon&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
     duration: "0:45",
     likes: 89,
     time: "2小时前",
@@ -78,7 +78,7 @@ const mockRelayVoices = [
   {
     id: "v2",
     user: "温柔说书人",
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=book",
+    avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=book&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
     duration: "1:12",
     likes: 156,
     time: "3小时前",
@@ -86,7 +86,7 @@ const mockRelayVoices = [
   {
     id: "v3",
     user: "诗意人生",
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=poetry",
+    avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=poetry&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
     duration: "0:58",
     likes: 234,
     time: "5小时前",
@@ -94,7 +94,7 @@ const mockRelayVoices = [
   {
     id: "v4",
     user: "咖啡与书",
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=coffee",
+    avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=coffee&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
     duration: "1:30",
     likes: 67,
     time: "8小时前",
@@ -102,7 +102,7 @@ const mockRelayVoices = [
   {
     id: "v5",
     user: "暖心妈妈",
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=mama",
+    avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=mama&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
     duration: "2:05",
     likes: 345,
     time: "1天前",

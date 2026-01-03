@@ -42,7 +42,7 @@ const mockComments: Comment[] = [
     id: "1",
     author: "温暖的阳光",
     authorId: "user_sun",
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=sun",
+    avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=sun&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
     content: "听完这个声音，感觉整个人都放松下来了，谢谢分享 💜",
     time: "2小时前",
     likes: 23,
@@ -51,7 +51,7 @@ const mockComments: Comment[] = [
     id: "2",
     author: "夜空中的星",
     authorId: "user_star",
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=star",
+    avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=star&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
     content: "每晚睡前都会听，已经成为我的入睡仪式了",
     time: "5小时前",
     likes: 45,
@@ -60,7 +60,7 @@ const mockComments: Comment[] = [
     id: "3",
     author: "清风徐来",
     authorId: "user_wind",
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=wind",
+    avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=wind&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
     content: "声音好温柔，配乐也很棒！期待更多作品",
     time: "1天前",
     likes: 18,
@@ -69,7 +69,7 @@ const mockComments: Comment[] = [
     id: "4",
     author: "花开半夏",
     authorId: "user_flower",
-    avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=flower",
+    avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=flower&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
     content: "分享给了我的好姐妹，她也很喜欢 ✨",
     time: "2天前",
     likes: 12,
@@ -135,7 +135,7 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
       id: Date.now().toString(),
       author: "我",
       authorId: "myprofile",
-      avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=user",
+      avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=user&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear",
       content: newComment,
       time: "刚刚",
       likes: 0,
@@ -368,7 +368,7 @@ const AudioDetailModal = ({ isOpen, onClose, audio }: AudioDetailModalProps) => 
       <footer className="flex-shrink-0 p-4 border-t border-border bg-background safe-area-bottom">
         <div className="max-w-2xl mx-auto flex gap-3">
           <img
-            src="https://api.dicebear.com/7.x/lorelei/svg?seed=user"
+            src="https://api.dicebear.com/7.x/adventurer/svg?seed=user&backgroundColor=ffd5dc,c0aede,b6e3f4&backgroundType=gradientLinear"
             alt="我的头像"
             className="w-9 h-9 rounded-full flex-shrink-0"
           />
