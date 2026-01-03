@@ -185,6 +185,11 @@ export default {
           "0%": { transform: "rotate(0deg)" },
           "100%": { transform: "rotate(360deg)" },
         },
+        // 新增：唱片慢速旋转
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -206,6 +211,7 @@ export default {
         "slide-down": "slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
         "pulse-breathe": "pulse-breathe 2s ease-in-out infinite",
         "spin-glow": "spin-glow 8s linear infinite",
+        "spin-slow": "spin-slow 4s linear infinite",
       },
       backdropBlur: {
         xs: "2px",
