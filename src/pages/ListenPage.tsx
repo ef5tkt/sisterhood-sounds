@@ -402,6 +402,7 @@ const ListenPage = () => {
 
   // 评论处理 - 打开评论面板
   const handleComment = () => {
+    console.log("Opening comment sheet");
     setShowCommentSheet(true);
   };
 
