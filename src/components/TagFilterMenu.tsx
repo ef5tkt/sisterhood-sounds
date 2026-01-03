@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Sparkles, BookOpen, Lightbulb, Rabbit, Users, Mic } from "lucide-react";
+import { Sparkles, BookOpen, Heart, Rabbit, Users, Mic } from "lucide-react";
 
 interface TagFilterMenuProps {
   isOpen: boolean;
@@ -12,7 +12,7 @@ interface TagFilterMenuProps {
 const tags = [
   { id: "冥想", label: "冥想", icon: Sparkles, color: "from-purple-400 to-purple-600" },
   { id: "故事", label: "故事", icon: BookOpen, color: "from-pink-400 to-rose-500" },
-  { id: "想法", label: "想法", icon: Lightbulb, color: "from-amber-400 to-orange-500" },
+  { id: "女性力量", label: "女性力量", icon: Heart, color: "from-amber-400 to-orange-500" },
   { id: "兔子洞", label: "兔子洞", icon: Rabbit, color: "from-emerald-400 to-teal-500" },
   { id: "共创", label: "共创", icon: Users, color: "from-blue-400 to-indigo-500" },
 ];
