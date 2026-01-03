@@ -166,6 +166,14 @@ const ListenPage = () => {
       setCurrentAudio(newAudio);
       setIsLiked(false);
       setIsSaved(false);
+      setAudioProgress(0);
+      
+      // 提示用户已切换
+      if (newAudio && !newAudio.audioUrl) {
+        toast("已切换到新内容，暂无音频源", {
+          className: "glass-panel",
+        });
+      }
       
       setTimeout(() => {
         setIsTransitioning(false);
