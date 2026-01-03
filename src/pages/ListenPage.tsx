@@ -239,6 +239,30 @@ const ListenPage = () => {
     setSwipeOffset(0);
   }, [swipeOffset, switchAudio, currentTag]);
 
+  // 鼠标长按处理（桌面端）
+  const handleMouseDown = useCallback(() => {
+    isLongPress.current = false;
+    
+    longPressTimer.current = setTimeout(() => {
+      isLongPress.current = true;
+      setShowTagMenu(true);
+    }, 500);
+  }, []);
+
+  const handleMouseUp = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
   // 点击处理 - 暂停/播放
   const handleScreenClick = useCallback(() => {
     // 如果是长按触发的，不处理点击
@@ -396,6 +420,9 @@ const ListenPage = () => {
           transition: isDragging.current ? 'none' : 'transform 0.3s ease-out, opacity 0.5s, scale 0.5s'
         }}
         onClick={handleScreenClick}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
       >
         {/* 唱片播放器 */}
         <div className="mb-6 animate-fade-in">
