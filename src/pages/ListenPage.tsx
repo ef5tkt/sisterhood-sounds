@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, Star, MessageCircle, Share2, ChevronLeft, User, ChevronUp } from "lucide-react";
+import { Heart, Star, MessageCircle, Share2, ChevronLeft, User, ChevronUp, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { mockAudios, AudioItem } from "@/data/mockAudios";
+import { useAudios, AudioItem } from "@/hooks/useAudios";
 import NFTAvatar from "@/components/NFTAvatar";
 import AudioVisualizer from "@/components/AudioVisualizer";
 import TagFilterMenu from "@/components/TagFilterMenu";
@@ -20,6 +20,7 @@ const TAG_CATEGORY_MAP: Record<string, string[]> = {
 
 const ListenPage = () => {
   const navigate = useNavigate();
+  const { data: audios, isLoading } = useAudios();
   const [currentAudio, setCurrentAudio] = useState<AudioItem | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
@@ -39,18 +40,20 @@ const ListenPage = () => {
 
   // 根据标签获取随机音频
   const getRandomAudio = useCallback((tag?: string) => {
-    let filteredAudios = mockAudios;
+    if (!audios || audios.length === 0) return null;
+    
+    let filteredAudios = audios;
     
     if (tag && tag !== "兔子洞" && TAG_CATEGORY_MAP[tag]?.length > 0) {
       const categories = TAG_CATEGORY_MAP[tag];
-      filteredAudios = mockAudios.filter(audio => 
+      filteredAudios = audios.filter(audio => 
         categories.includes(audio.category)
       );
     }
     
     // 如果没有符合条件的音频，使用全部
     if (filteredAudios.length === 0) {
-      filteredAudios = mockAudios;
+      filteredAudios = audios;
     }
     
     // 随机选择，避免选到当前的
@@ -62,7 +65,7 @@ const ListenPage = () => {
     }
     
     return filteredAudios[randomIndex];
-  }, [currentAudio]);
+  }, [audios, currentAudio]);
 
   // 切换音频（带淡入淡出）
   const switchAudio = useCallback((tag?: string) => {
@@ -84,9 +87,11 @@ const ListenPage = () => {
 
   // 初始化时随机播放
   useEffect(() => {
-    const randomAudio = getRandomAudio();
-    setCurrentAudio(randomAudio);
-  }, []);
+    if (audios && audios.length > 0 && !currentAudio) {
+      const randomAudio = getRandomAudio();
+      setCurrentAudio(randomAudio);
+    }
+  }, [audios]);
 
   // 滑动手势处理
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -207,10 +212,11 @@ const ListenPage = () => {
     }
   };
 
-  if (!currentAudio) {
+  if (isLoading || !currentAudio) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">加载中...</div>
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+        <div className="text-muted-foreground">加载中...</div>
       </div>
     );
   }
