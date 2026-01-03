@@ -47,10 +47,13 @@ const ListenPage = () => {
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   const isLongPress = useRef<boolean>(false);
 
+  // 用于存储 switchAudio 回调的 ref
+  const switchAudioRef = useRef<((tag?: string) => void) | null>(null);
+
   // 初始化音频播放器
   useEffect(() => {
     audioRef.current = new Audio();
-    audioRef.current.loop = true;
+    audioRef.current.loop = false; // 不循环，播放完切换下一个
     audioRef.current.preload = "auto";
     
     const handlePlay = () => {
@@ -71,6 +74,12 @@ const ListenPage = () => {
         setAudioProgress(progress);
       }
     };
+    const handleEnded = () => {
+      // 播放结束后自动切换到下一个音频
+      if (switchAudioRef.current) {
+        switchAudioRef.current();
+      }
+    };
     
     audioRef.current.addEventListener('play', handlePlay);
     audioRef.current.addEventListener('pause', handlePause);
@@ -78,6 +87,7 @@ const ListenPage = () => {
     audioRef.current.addEventListener('loadstart', handleLoadStart);
     audioRef.current.addEventListener('canplay', handleCanPlay);
     audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
+    audioRef.current.addEventListener('ended', handleEnded);
     
     return () => {
       if (audioRef.current) {
@@ -88,6 +98,7 @@ const ListenPage = () => {
         audioRef.current.removeEventListener('loadstart', handleLoadStart);
         audioRef.current.removeEventListener('canplay', handleCanPlay);
         audioRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+        audioRef.current.removeEventListener('ended', handleEnded);
         audioRef.current = null;
       }
     };
@@ -192,6 +203,11 @@ const ListenPage = () => {
       }, 100);
     }, 400);
   }, [getRandomAudio]);
+
+  // 更新 switchAudioRef 以便在 ended 事件中调用
+  useEffect(() => {
+    switchAudioRef.current = () => switchAudio(currentTag);
+  }, [switchAudio, currentTag]);
 
   // 初始化时随机播放
   useEffect(() => {
