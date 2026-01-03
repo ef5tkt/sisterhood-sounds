@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Heart, Star, MessageCircle, Share2, ChevronLeft, User, ChevronUp, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAudios, AudioItem } from "@/hooks/useAudios";
-import NFTAvatar from "@/components/NFTAvatar";
+import VinylPlayer from "@/components/VinylPlayer";
 import AudioVisualizer from "@/components/AudioVisualizer";
 import TagFilterMenu from "@/components/TagFilterMenu";
 import WalletGateModal, { isUserVerified } from "@/components/WalletGateModal";
@@ -32,6 +32,7 @@ const ListenPage = () => {
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [pendingAction, setPendingAction] = useState<"save" | "comment" | null>(null);
   const [swipeOffset, setSwipeOffset] = useState(0);
+  const [audioProgress, setAudioProgress] = useState(0);
   
   // 滑动相关的 refs
   const touchStartY = useRef<number>(0);
@@ -64,12 +65,19 @@ const ListenPage = () => {
     };
     const handleLoadStart = () => setIsAudioLoading(true);
     const handleCanPlay = () => setIsAudioLoading(false);
+    const handleTimeUpdate = () => {
+      if (audioRef.current && audioRef.current.duration) {
+        const progress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
+        setAudioProgress(progress);
+      }
+    };
     
     audioRef.current.addEventListener('play', handlePlay);
     audioRef.current.addEventListener('pause', handlePause);
     audioRef.current.addEventListener('error', handleError);
     audioRef.current.addEventListener('loadstart', handleLoadStart);
     audioRef.current.addEventListener('canplay', handleCanPlay);
+    audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
     
     return () => {
       if (audioRef.current) {
@@ -79,6 +87,7 @@ const ListenPage = () => {
         audioRef.current.removeEventListener('error', handleError);
         audioRef.current.removeEventListener('loadstart', handleLoadStart);
         audioRef.current.removeEventListener('canplay', handleCanPlay);
+        audioRef.current.removeEventListener('timeupdate', handleTimeUpdate);
         audioRef.current = null;
       }
     };
@@ -388,34 +397,26 @@ const ListenPage = () => {
         }}
         onClick={handleScreenClick}
       >
-        {/* NFT 风格头像 - 点击跳转个人主页 */}
-        <div 
-          className="mb-8 animate-fade-in cursor-pointer"
-          onClick={handleAvatarClick}
-        >
-          <NFTAvatar 
-            src={currentAudio.avatar}
+        {/* 唱片播放器 */}
+        <div className="mb-6 animate-fade-in">
+          <VinylPlayer 
+            isPlaying={isPlaying}
+            progress={audioProgress}
             size="xl"
-            glowing
           />
-        </div>
-
-        {/* 音频可视化器 */}
-        <div className="mb-8">
-          <AudioVisualizer isPlaying={isPlaying} />
           {isAudioLoading && currentAudio?.audioUrl && (
-            <div className="text-center mt-2 text-sm text-muted-foreground/70 flex items-center justify-center gap-2">
+            <div className="text-center mt-4 text-sm text-muted-foreground/70 flex items-center justify-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin" />
               加载中...
             </div>
           )}
           {!isAudioLoading && !isPlaying && currentAudio?.audioUrl && (
-            <div className="text-center mt-2 text-sm text-muted-foreground/70">
+            <div className="text-center mt-4 text-sm text-muted-foreground/70">
               点击屏幕播放
             </div>
           )}
           {!currentAudio?.audioUrl && (
-            <div className="text-center mt-2 text-sm text-muted-foreground/50">
+            <div className="text-center mt-4 text-sm text-muted-foreground/50">
               暂无音频
             </div>
           )}
