@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 const TAG_CATEGORY_MAP: Record<string, string[]> = {
   "冥想": ["冥想"],
   "故事": ["故事"],
-  "想法": ["演讲", "诗词"],
+  "女性力量": ["演讲", "诗词"],
   "兔子洞": [], // 全局随机
   "共创": [], // 跳转 Relay
 };
