@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
 import ListenPage from "./pages/ListenPage";
-
+import AuthPage from "./pages/AuthPage";
 import CreatePage from "./pages/CreatePage";
 import ProfilePage from "./pages/ProfilePage";
 import NotificationsPage from "./pages/NotificationsPage";
@@ -35,6 +35,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/listen" element={<ListenPage />} />
+          <Route path="/auth" element={<AuthPage />} />
           
           <Route path="/create" element={<CreatePage />} />
           <Route path="/profile" element={<ProfilePage />} />

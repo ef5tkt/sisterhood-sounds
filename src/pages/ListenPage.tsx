@@ -7,6 +7,7 @@ import VinylPlayer from "@/components/VinylPlayer";
 import AudioVisualizer from "@/components/AudioVisualizer";
 import TagFilterMenu from "@/components/TagFilterMenu";
 import WalletGateModal, { isUserVerified } from "@/components/WalletGateModal";
+import CommentSheet from "@/components/CommentSheet";
 import { cn } from "@/lib/utils";
 
 // 标签映射
@@ -33,6 +34,7 @@ const ListenPage = () => {
   const [pendingAction, setPendingAction] = useState<"save" | "comment" | null>(null);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [audioProgress, setAudioProgress] = useState(0);
+  const [showCommentSheet, setShowCommentSheet] = useState(false);
   
   // 滑动相关的 refs
   const touchStartY = useRef<number>(0);
@@ -398,14 +400,14 @@ const ListenPage = () => {
     }
   };
 
-  // 评论处理 - 需要验证
+  // 评论处理 - 打开评论面板
   const handleComment = () => {
-    if (!isUserVerified()) {
-      setPendingAction("comment");
-      setShowWalletModal(true);
-      return;
-    }
-    toast("评论功能即将开放 💬");
+    setShowCommentSheet(true);
+  };
+
+  // 需要登录时跳转到登录页
+  const handleLoginRequired = () => {
+    navigate('/auth');
   };
 
   // 分享处理 - 所有人都可以
@@ -646,6 +648,16 @@ const ListenPage = () => {
         onCreateClick={handleCreateClick}
         currentTag={currentTag}
       />
+
+      {/* 评论面板 */}
+      {currentAudio && (
+        <CommentSheet
+          isOpen={showCommentSheet}
+          onClose={() => setShowCommentSheet(false)}
+          audioId={currentAudio.id}
+          onLoginRequired={handleLoginRequired}
+        />
+      )}
 
       {/* 钱包验证模态框 */}
       <WalletGateModal
